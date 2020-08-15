@@ -63,7 +63,7 @@ func DecodeContent(content, extension string, element interface{}) error {
 
 	filters := getRootFieldNames(element)
 
-	node, err := decodeRawToNode(data, parser.DefaultRootName, filters...)
+	node, err := decodeRawToNode(data, filters...)
 	if err != nil {
 		return err
 	}

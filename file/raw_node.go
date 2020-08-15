@@ -10,9 +10,9 @@ import (
 	"github.com/traefik/paerser/parser"
 )
 
-func decodeRawToNode(data map[string]interface{}, rootName string, filters ...string) (*parser.Node, error) {
+func decodeRawToNode(data map[string]interface{}, filters ...string) (*parser.Node, error) {
 	root := &parser.Node{
-		Name: rootName,
+		Name: parser.DefaultRootName,
 	}
 
 	vData := reflect.ValueOf(data)

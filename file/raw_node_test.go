@@ -545,7 +545,7 @@ func Test_decodeRawToNode(t *testing.T) {
 		t.Run(test.desc, func(t *testing.T) {
 			t.Parallel()
 
-			node, err := decodeRawToNode(test.data, parser.DefaultRootName)
+			node, err := decodeRawToNode(test.data)
 			require.NoError(t, err)
 
 			assert.Equal(t, test.expected, node)
@@ -571,7 +571,7 @@ func Test_decodeRawToNode_errors(t *testing.T) {
 		t.Run(test.desc, func(t *testing.T) {
 			t.Parallel()
 
-			_, err := decodeRawToNode(test.data, parser.DefaultRootName)
+			_, err := decodeRawToNode(test.data)
 			require.Error(t, err)
 		})
 	}

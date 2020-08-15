@@ -257,7 +257,7 @@ func TestEncode(t *testing.T) {
 	}
 	generator.Generate(element)
 
-	flats, err := Encode(element)
+	flats, err := Encode(DefaultNamePrefix, element)
 	require.NoError(t, err)
 
 	expected := []parser.Flat{

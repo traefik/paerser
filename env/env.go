@@ -41,13 +41,19 @@ func Decode(environ []string, prefix string, element interface{}) error {
 // typed configuration in element -> tree of untyped nodes
 // untyped nodes -> nodes augmented with metadata such as kind (inferred from element)
 // "typed" nodes -> environment variables with default values (determined by type/kind).
-func Encode(element interface{}) ([]parser.Flat, error) {
+func Encode(prefix string, element interface{}) ([]parser.Flat, error) {
+	if err := checkPrefix(prefix); err != nil {
+		return nil, err
+	}
+
+	rootName := strings.ToLower(prefix[:len(prefix)-1])
+
 	if element == nil {
 		return nil, nil
 	}
 
 	etnOpts := parser.EncoderToNodeOpts{OmitEmpty: false, TagName: parser.TagLabel, AllowSliceAsStruct: true}
-	node, err := parser.EncodeToNode(element, parser.DefaultRootName, etnOpts)
+	node, err := parser.EncodeToNode(element, rootName, etnOpts)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +69,7 @@ func Encode(element interface{}) ([]parser.Flat, error) {
 }
 
 func checkPrefix(prefix string) error {
-	prefixPattern := `[a-zA-Z0-9]+_`
+	prefixPattern := `^[a-zA-Z0-9]+_$`
 	matched, err := regexp.MatchString(prefixPattern, prefix)
 	if err != nil {
 		return err

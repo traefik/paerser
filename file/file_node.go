@@ -43,7 +43,7 @@ func decodeFileToNode(filePath string, filters ...string) (*parser.Node, error) 
 		return nil, fmt.Errorf("no configuration found in file: %s", filePath)
 	}
 
-	node, err := decodeRawToNode(data, parser.DefaultRootName, filters...)
+	node, err := decodeRawToNode(data, filters...)
 	if err != nil {
 		return nil, err
 	}
