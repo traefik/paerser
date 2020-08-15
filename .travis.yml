@@ -1,0 +1,35 @@
+language: go
+
+notifications:
+  email:
+    on_success: never
+    on_failure: change
+
+cache:
+  directories:
+    - $GOPATH/pkg/mod
+
+matrix:
+  fast_finish: true
+  include:
+    - go: 1.15.x
+      env: STABLE=true
+    - go: 1.x
+    - go: tip
+  allow_failures:
+    - go: tip
+
+env:
+  global:
+    - GO111MODULE=on
+
+before_install:
+  # Install linters and misspell
+  - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin ${GOLANGCI_LINT_VERSION}
+  - golangci-lint --version
+
+install:
+  - go mod tidy
+  - git diff --exit-code go.mod
+  - git diff --exit-code go.sum
+  - go mod download
