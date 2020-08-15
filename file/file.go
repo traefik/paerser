@@ -50,7 +50,7 @@ func DecodeContent(content, extension string, element interface{}) error {
 			return err
 		}
 
-	case ".yml", ".yaml":
+	case ".yml", ".yaml", ".json":
 		var err error
 		err = yaml.Unmarshal([]byte(content), &data)
 		if err != nil {

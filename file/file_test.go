@@ -168,3 +168,62 @@ meta:
 	}
 	assert.Equal(t, expected, element)
 }
+
+func TestDecodeContent_JSON(t *testing.T) {
+	content := `
+{
+  "foo": "bar",
+  "fii": "bir",
+  "yi": {}
+}
+`
+
+	element := &Yo{
+		Fuu: "test",
+	}
+
+	err := DecodeContent(content, ".json", element)
+	require.NoError(t, err)
+
+	expected := &Yo{
+		Foo: "bar",
+		Fii: "bir",
+		Fuu: "test",
+		Yi: &Yi{
+			Foo: "foo",
+			Fii: "fii",
+		},
+	}
+	assert.Equal(t, expected, element)
+}
+
+func TestDecodeContent_JSON_rawValue(t *testing.T) {
+	content := `
+{
+  "name": "test",
+  "meta": {
+    "aaa": [
+      {
+        "bbb": 1
+      }
+    ]
+  }
+}
+`
+
+	type Foo struct {
+		Name string
+		Meta map[string]interface{}
+	}
+
+	element := &Foo{}
+
+	err := DecodeContent(content, ".json", element)
+	require.NoError(t, err)
+
+	expected := &Foo{
+		Name: "test",
+		Meta: map[string]interface{}{"aaa": []interface{}{map[string]interface{}{"bbb": "1"}}},
+	}
+	assert.Equal(t, expected, element)
+}
