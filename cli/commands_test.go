@@ -7,6 +7,7 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -115,713 +116,718 @@ func TestCommand_PrintHelp(t *testing.T) {
 	}
 }
 
-// func Test_execute(t *testing.T) {
-// 	var called string
-//
-// 	type expected struct {
-// 		result string
-// 		error  bool
-// 	}
-//
-// 	testCases := []struct {
-// 		desc     string
-// 		args     []string
-// 		command  func() *Command
-// 		expected expected
-// 	}{
-// 		{
-// 			desc: "root command",
-// 			args: []string{""},
-// 			command: func() *Command {
-// 				return &Command{
-// 					Name:          "root",
-// 					Description:   "This is a test",
-// 					Configuration: nil,
-// 					Run: func(_ []string) error {
-// 						called = "root"
-// 						return nil
-// 					},
-// 				}
-// 			},
-// 			expected: expected{result: "root"},
-// 		},
-// 		{
-// 			desc: "root command, with argument, command not found",
-// 			args: []string{"", "echo"},
-// 			command: func() *Command {
-// 				return &Command{
-// 					Name:          "root",
-// 					Description:   "This is a test",
-// 					Configuration: nil,
-// 					Run: func(_ []string) error {
-// 						called = "root"
-// 						return nil
-// 					},
-// 				}
-// 			},
-// 			expected: expected{error: true},
-// 		},
-// 		{
-// 			desc: "root command, call help, with argument, command not found",
-// 			args: []string{"", "echo", "--help"},
-// 			command: func() *Command {
-// 				return &Command{
-// 					Name:          "root",
-// 					Description:   "This is a test",
-// 					Configuration: nil,
-// 					Run: func(_ []string) error {
-// 						called = "root"
-// 						return nil
-// 					},
-// 				}
-// 			},
-// 			expected: expected{error: true},
-// 		},
-// 		{
-// 			desc: "one sub command",
-// 			args: []string{"", "sub1"},
-// 			command: func() *Command {
-// 				rootCmd := &Command{
-// 					Name:          "test",
-// 					Description:   "This is a test",
-// 					Configuration: nil,
-// 					Run: func(_ []string) error {
-// 						called += "root"
-// 						return nil
-// 					},
-// 				}
-//
-// 				_ = rootCmd.AddCommand(&Command{
-// 					Name:          "sub1",
-// 					Description:   "sub1",
-// 					Configuration: nil,
-// 					Run: func(_ []string) error {
-// 						called += "sub1"
-// 						return nil
-// 					},
-// 				})
-//
-// 				return rootCmd
-// 			},
-// 			expected: expected{result: "sub1"},
-// 		},
-// 		{
-// 			desc: "one sub command, with argument, command not found",
-// 			args: []string{"", "sub1", "echo"},
-// 			command: func() *Command {
-// 				rootCmd := &Command{
-// 					Name:          "test",
-// 					Description:   "This is a test",
-// 					Configuration: nil,
-// 					Run: func(_ []string) error {
-// 						called += "root"
-// 						return nil
-// 					},
-// 				}
-//
-// 				_ = rootCmd.AddCommand(&Command{
-// 					Name:          "sub1",
-// 					Description:   "sub1",
-// 					Configuration: nil,
-// 					Run: func(_ []string) error {
-// 						called += "sub1"
-// 						return nil
-// 					},
-// 				})
-//
-// 				return rootCmd
-// 			},
-// 			expected: expected{error: true},
-// 		},
-// 		{
-// 			desc: "two sub commands",
-// 			args: []string{"", "sub2"},
-// 			command: func() *Command {
-// 				rootCmd := &Command{
-// 					Name:          "test",
-// 					Description:   "This is a test",
-// 					Configuration: nil,
-// 					Run: func(_ []string) error {
-// 						called += "root"
-// 						return nil
-// 					},
-// 				}
-//
-// 				_ = rootCmd.AddCommand(&Command{
-// 					Name:          "sub1",
-// 					Description:   "sub1",
-// 					Configuration: nil,
-// 					Run: func(_ []string) error {
-// 						called += "sub1"
-// 						return nil
-// 					},
-// 				})
-//
-// 				_ = rootCmd.AddCommand(&Command{
-// 					Name:          "sub2",
-// 					Description:   "sub2",
-// 					Configuration: nil,
-// 					Run: func(_ []string) error {
-// 						called += "sub2"
-// 						return nil
-// 					},
-// 				})
-//
-// 				return rootCmd
-// 			},
-// 			expected: expected{result: "sub2"},
-// 		},
-// 		{
-// 			desc: "command with sub sub command, call sub command",
-// 			args: []string{"", "sub1"},
-// 			command: func() *Command {
-// 				rootCmd := &Command{
-// 					Name:          "test",
-// 					Description:   "This is a test",
-// 					Configuration: nil,
-// 					Run: func(_ []string) error {
-// 						called += "root"
-// 						return nil
-// 					},
-// 				}
-//
-// 				sub1 := &Command{
-// 					Name:          "sub1",
-// 					Description:   "sub1",
-// 					Configuration: nil,
-// 					Run: func(_ []string) error {
-// 						called += "sub1"
-// 						return nil
-// 					},
-// 				}
-// 				_ = rootCmd.AddCommand(sub1)
-//
-// 				_ = sub1.AddCommand(&Command{
-// 					Name:          "sub2",
-// 					Description:   "sub2",
-// 					Configuration: nil,
-// 					Run: func(_ []string) error {
-// 						called += "sub2"
-// 						return nil
-// 					},
-// 				})
-//
-// 				return rootCmd
-// 			},
-// 			expected: expected{result: "sub1"},
-// 		},
-// 		{
-// 			desc: "command with sub sub command, call sub sub command",
-// 			args: []string{"", "sub1", "sub2"},
-// 			command: func() *Command {
-// 				rootCmd := &Command{
-// 					Name:          "test",
-// 					Description:   "This is a test",
-// 					Configuration: nil,
-// 					Run: func(_ []string) error {
-// 						called += "root"
-// 						return nil
-// 					},
-// 				}
-//
-// 				sub1 := &Command{
-// 					Name:          "sub1",
-// 					Description:   "sub1",
-// 					Configuration: nil,
-// 					Run: func(_ []string) error {
-// 						called += "sub1"
-// 						return nil
-// 					},
-// 				}
-// 				_ = rootCmd.AddCommand(sub1)
-//
-// 				_ = sub1.AddCommand(&Command{
-// 					Name:          "sub2",
-// 					Description:   "sub2",
-// 					Configuration: nil,
-// 					Run: func(_ []string) error {
-// 						called += "sub2"
-// 						return nil
-// 					},
-// 				})
-//
-// 				return rootCmd
-// 			},
-// 			expected: expected{result: "sub2"},
-// 		},
-// 		{
-// 			desc: "command with sub command, call root command explicitly",
-// 			args: []string{"", "root"},
-// 			command: func() *Command {
-// 				rootCmd := &Command{
-// 					Name:          "root",
-// 					Description:   "This is a test",
-// 					Configuration: nil,
-// 					Run: func(_ []string) error {
-// 						called += "root"
-// 						return nil
-// 					},
-// 				}
-//
-// 				_ = rootCmd.AddCommand(&Command{
-// 					Name:          "sub1",
-// 					Description:   "sub1",
-// 					Configuration: nil,
-// 					Run: func(_ []string) error {
-// 						called += "sub1"
-// 						return nil
-// 					},
-// 				})
-//
-// 				return rootCmd
-// 			},
-// 			expected: expected{result: "root"},
-// 		},
-// 		{
-// 			desc: "command with sub command, call root command implicitly",
-// 			args: []string{""},
-// 			command: func() *Command {
-// 				rootCmd := &Command{
-// 					Name:          "root",
-// 					Description:   "This is a test",
-// 					Configuration: nil,
-// 					Run: func(_ []string) error {
-// 						called += "root"
-// 						return nil
-// 					},
-// 				}
-//
-// 				_ = rootCmd.AddCommand(&Command{
-// 					Name:          "sub1",
-// 					Description:   "sub1",
-// 					Configuration: nil,
-// 					Run: func(_ []string) error {
-// 						called += "sub1"
-// 						return nil
-// 					},
-// 				})
-//
-// 				return rootCmd
-// 			},
-// 			expected: expected{result: "root"},
-// 		},
-// 		{
-// 			desc: "command with sub command, call sub command which has no run",
-// 			args: []string{"", "sub1"},
-// 			command: func() *Command {
-// 				rootCmd := &Command{
-// 					Name:          "root",
-// 					Description:   "This is a test",
-// 					Configuration: nil,
-// 					Run: func(_ []string) error {
-// 						called += "root"
-// 						return nil
-// 					},
-// 				}
-//
-// 				_ = rootCmd.AddCommand(&Command{
-// 					Name:          "sub1",
-// 					Description:   "sub1",
-// 					Configuration: nil,
-// 				})
-//
-// 				return rootCmd
-// 			},
-// 			expected: expected{error: true},
-// 		},
-// 		{
-// 			desc: "command with sub command, call root command which has no run",
-// 			args: []string{"", "root"},
-// 			command: func() *Command {
-// 				rootCmd := &Command{
-// 					Name:          "root",
-// 					Description:   "This is a test",
-// 					Configuration: nil,
-// 				}
-//
-// 				_ = rootCmd.AddCommand(&Command{
-// 					Name:          "sub1",
-// 					Description:   "sub1",
-// 					Configuration: nil,
-// 					Run: func(_ []string) error {
-// 						called += "sub1"
-// 						return nil
-// 					},
-// 				})
-//
-// 				return rootCmd
-// 			},
-// 			expected: expected{error: true},
-// 		},
-// 		{
-// 			desc: "command with sub command, call implicitly root command which has no run",
-// 			args: []string{""},
-// 			command: func() *Command {
-// 				rootCmd := &Command{
-// 					Name:          "root",
-// 					Description:   "This is a test",
-// 					Configuration: nil,
-// 				}
-//
-// 				_ = rootCmd.AddCommand(&Command{
-// 					Name:          "sub1",
-// 					Description:   "sub1",
-// 					Configuration: nil,
-// 					Run: func(_ []string) error {
-// 						called += "sub1"
-// 						return nil
-// 					},
-// 				})
-//
-// 				return rootCmd
-// 			},
-// 			expected: expected{error: true},
-// 		},
-// 		{
-// 			desc: "command with sub command, call sub command with arguments",
-// 			args: []string{"", "sub1", "foobar.txt"},
-// 			command: func() *Command {
-// 				rootCmd := &Command{
-// 					Name:          "root",
-// 					Description:   "This is a test",
-// 					Configuration: nil,
-// 					Run: func(_ []string) error {
-// 						called = "root"
-// 						return nil
-// 					},
-// 				}
-//
-// 				_ = rootCmd.AddCommand(&Command{
-// 					Name:          "sub1",
-// 					Description:   "sub1",
-// 					Configuration: nil,
-// 					AllowArg:      true,
-// 					Run: func(args []string) error {
-// 						called += "sub1-" + strings.Join(args, "-")
-// 						return nil
-// 					},
-// 				})
-//
-// 				return rootCmd
-// 			},
-// 			expected: expected{result: "sub1-foobar.txt"},
-// 		},
-// 		{
-// 			desc: "command with sub command, call root command with arguments",
-// 			args: []string{"", "foobar.txt"},
-// 			command: func() *Command {
-// 				rootCmd := &Command{
-// 					Name:          "root",
-// 					Description:   "This is a test",
-// 					Configuration: nil,
-// 					AllowArg:      true,
-// 					Run: func(args []string) error {
-// 						called += "root-" + strings.Join(args, "-")
-// 						return nil
-// 					},
-// 				}
-//
-// 				_ = rootCmd.AddCommand(&Command{
-// 					Name:          "sub1",
-// 					Description:   "sub1",
-// 					Configuration: nil,
-// 					Run: func(args []string) error {
-// 						called += "sub1-" + strings.Join(args, "-")
-// 						return nil
-// 					},
-// 				})
-//
-// 				return rootCmd
-// 			},
-// 			expected: expected{result: "root-foobar.txt"},
-// 		},
-// 		{
-// 			desc: "command with sub command, call sub command with flags",
-// 			args: []string{"", "sub1", "--foo=bar", "--fii=bir"},
-// 			command: func() *Command {
-// 				rootCmd := &Command{
-// 					Name:          "root",
-// 					Description:   "This is a test",
-// 					Configuration: nil,
-// 					Run: func(_ []string) error {
-// 						called = "root"
-// 						return nil
-// 					},
-// 				}
-//
-// 				_ = rootCmd.AddCommand(&Command{
-// 					Name:          "sub1",
-// 					Description:   "sub1",
-// 					Configuration: nil,
-// 					Run: func(args []string) error {
-// 						called += "sub1-" + strings.Join(args, "")
-// 						return nil
-// 					},
-// 				})
-//
-// 				return rootCmd
-// 			},
-// 			expected: expected{result: "sub1---foo=bar--fii=bir"},
-// 		},
-// 		{
-// 			desc: "command with sub command, call explicitly root command with flags",
-// 			args: []string{"", "root", "--foo=bar", "--fii=bir"},
-// 			command: func() *Command {
-// 				rootCmd := &Command{
-// 					Name:          "root",
-// 					Description:   "This is a test",
-// 					Configuration: nil,
-// 					Run: func(args []string) error {
-// 						called += "root-" + strings.Join(args, "")
-// 						return nil
-// 					},
-// 				}
-//
-// 				_ = rootCmd.AddCommand(&Command{
-// 					Name:          "sub1",
-// 					Description:   "sub1",
-// 					Configuration: nil,
-// 					Run: func(args []string) error {
-// 						called += "sub1-" + strings.Join(args, "")
-// 						return nil
-// 					},
-// 				})
-//
-// 				return rootCmd
-// 			},
-// 			expected: expected{result: "root---foo=bar--fii=bir"},
-// 		},
-// 		{
-// 			desc: "command with sub command, call implicitly root command with flags",
-// 			args: []string{"", "--foo=bar", "--fii=bir"},
-// 			command: func() *Command {
-// 				rootCmd := &Command{
-// 					Name:          "root",
-// 					Description:   "This is a test",
-// 					Configuration: nil,
-// 					Run: func(args []string) error {
-// 						called += "root-" + strings.Join(args, "")
-// 						return nil
-// 					},
-// 				}
-//
-// 				_ = rootCmd.AddCommand(&Command{
-// 					Name:          "sub1",
-// 					Description:   "sub1",
-// 					Configuration: nil,
-// 					Run: func(args []string) error {
-// 						called += "sub1-" + strings.Join(args, "")
-// 						return nil
-// 					},
-// 				})
-//
-// 				return rootCmd
-// 			},
-// 			expected: expected{result: "root---foo=bar--fii=bir"},
-// 		},
-// 		{
-// 			desc: "sub command help",
-// 			args: []string{"", "test", "subtest", "--help"},
-// 			command: func() *Command {
-// 				rootCmd := &Command{
-// 					Name:      "test",
-// 					Resources: []ResourceLoader{&FlagLoader{}},
-// 				}
-//
-// 				subCmd := &Command{
-// 					Name:      "subtest",
-// 					Resources: []ResourceLoader{&FlagLoader{}},
-// 				}
-//
-// 				err := rootCmd.AddCommand(subCmd)
-// 				require.NoError(t, err)
-//
-// 				subSubCmd := &Command{
-// 					Name:      "subsubtest",
-// 					Resources: []ResourceLoader{&FlagLoader{}},
-// 				}
-//
-// 				err = subCmd.AddCommand(subSubCmd)
-// 				require.NoError(t, err)
-//
-// 				subSubSubCmd := &Command{
-// 					Name:      "subsubsubtest",
-// 					Resources: []ResourceLoader{&FlagLoader{}},
-// 					Run: func([]string) error {
-// 						called = "subsubsubtest"
-// 						return nil
-// 					},
-// 				}
-//
-// 				err = subSubCmd.AddCommand(subSubSubCmd)
-// 				require.NoError(t, err)
-//
-// 				return rootCmd
-// 			},
-// 			expected: expected{},
-// 		},
-// 		{
-// 			desc: "sub sub command help",
-// 			args: []string{"", "test", "subtest", "subsubtest", "--help"},
-// 			command: func() *Command {
-// 				rootCmd := &Command{
-// 					Name:      "test",
-// 					Resources: []ResourceLoader{&FlagLoader{}},
-// 				}
-//
-// 				subCmd := &Command{
-// 					Name:      "subtest",
-// 					Resources: []ResourceLoader{&FlagLoader{}},
-// 				}
-//
-// 				err := rootCmd.AddCommand(subCmd)
-// 				require.NoError(t, err)
-//
-// 				subSubCmd := &Command{
-// 					Name:      "subsubtest",
-// 					Resources: []ResourceLoader{&FlagLoader{}},
-// 				}
-//
-// 				err = subCmd.AddCommand(subSubCmd)
-// 				require.NoError(t, err)
-//
-// 				subSubSubCmd := &Command{
-// 					Name:      "subsubsubtest",
-// 					Resources: []ResourceLoader{&FlagLoader{}},
-// 					Run: func([]string) error {
-// 						called = "subsubsubtest"
-// 						return nil
-// 					},
-// 				}
-//
-// 				err = subSubCmd.AddCommand(subSubSubCmd)
-// 				require.NoError(t, err)
-//
-// 				return rootCmd
-// 			},
-// 			expected: expected{},
-// 		},
-// 	}
-//
-// 	for _, test := range testCases {
-// 		t.Run(test.desc, func(t *testing.T) {
-// 			defer func() {
-// 				called = ""
-// 			}()
-//
-// 			err := execute(test.command(), test.args, true)
-//
-// 			if test.expected.error {
-// 				require.Error(t, err)
-// 			} else {
-// 				require.NoError(t, err)
-// 				assert.Equal(t, test.expected.result, called)
-// 			}
-// 		})
-// 	}
-// }
+func Test_execute(t *testing.T) {
+	var called string
 
-// func Test_execute_configuration(t *testing.T) {
-// 	rootCmd := &Command{
-// 		Name:          "root",
-// 		Description:   "This is a test",
-// 		Configuration: nil,
-// 		Run: func(_ []string) error {
-// 			return nil
-// 		},
-// 	}
-//
-// 	element := &Yo{
-// 		Fuu: "test",
-// 	}
-//
-// 	sub1 := &Command{
-// 		Name:          "sub1",
-// 		Description:   "sub1",
-// 		Configuration: element,
-// 		Resources:     []ResourceLoader{&FlagLoader{}},
-// 		Run: func(args []string) error {
-// 			return nil
-// 		},
-// 	}
-// 	err := rootCmd.AddCommand(sub1)
-// 	require.NoError(t, err)
-//
-// 	args := []string{"", "sub1", "--foo=bar", "--fii=bir", "--yi"}
-//
-// 	err = execute(rootCmd, args, true)
-// 	require.NoError(t, err)
-//
-// 	expected := &Yo{
-// 		Foo: "bar",
-// 		Fii: "bir",
-// 		Fuu: "test",
-// 		Yi: &Yi{
-// 			Foo: "foo",
-// 			Fii: "fii",
-// 		},
-// 	}
-// 	assert.Equal(t, expected, element)
-// }
+	type expected struct {
+		result string
+		error  bool
+	}
 
-// func Test_execute_configuration_file(t *testing.T) {
-// 	testCases := []struct {
-// 		desc string
-// 		args []string
-// 	}{
-// 		{
-// 			desc: "configFile arg in camel case",
-// 			args: []string{"", "sub1", "--configFile=./fixtures/config.toml"},
-// 		},
-// 		{
-// 			desc: "configfile arg in lower case",
-// 			args: []string{"", "sub1", "--configfile=./fixtures/config.toml"},
-// 		},
-// 	}
-//
-// 	for _, test := range testCases {
-// 		t.Run(test.desc, func(t *testing.T) {
-// 			rootCmd := &Command{
-// 				Name:          "root",
-// 				Description:   "This is a test",
-// 				Configuration: nil,
-// 				Run: func(_ []string) error {
-// 					return nil
-// 				},
-// 			}
-//
-// 			element := &Yo{
-// 				Fuu: "test",
-// 			}
-//
-// 			sub1 := &Command{
-// 				Name:          "sub1",
-// 				Description:   "sub1",
-// 				Configuration: element,
-// 				Resources:     []ResourceLoader{&FileLoader{}, &FlagLoader{}},
-// 				Run: func(args []string) error {
-// 					return nil
-// 				},
-// 			}
-// 			err := rootCmd.AddCommand(sub1)
-// 			require.NoError(t, err)
-//
-// 			err = execute(rootCmd, test.args, true)
-// 			require.NoError(t, err)
-//
-// 			expected := &Yo{
-// 				Foo: "bar",
-// 				Fii: "bir",
-// 				Fuu: "test",
-// 				Yi: &Yi{
-// 					Foo: "foo",
-// 					Fii: "fii",
-// 				},
-// 			}
-// 			assert.Equal(t, expected, element)
-// 		})
-// 	}
-// }
+	testCases := []struct {
+		desc     string
+		args     []string
+		command  func() *Command
+		expected expected
+	}{
+		{
+			desc: "root command",
+			args: []string{""},
+			command: func() *Command {
+				return &Command{
+					Name:          "root",
+					Description:   "This is a test",
+					Configuration: nil,
+					Run: func(_ []string) error {
+						called = "root"
+						return nil
+					},
+				}
+			},
+			expected: expected{result: "root"},
+		},
+		{
+			desc: "root command, with argument, command not found",
+			args: []string{"", "echo"},
+			command: func() *Command {
+				return &Command{
+					Name:          "root",
+					Description:   "This is a test",
+					Configuration: nil,
+					Run: func(_ []string) error {
+						called = "root"
+						return nil
+					},
+				}
+			},
+			expected: expected{error: true},
+		},
+		{
+			desc: "root command, call help, with argument, command not found",
+			args: []string{"", "echo", "--help"},
+			command: func() *Command {
+				return &Command{
+					Name:          "root",
+					Description:   "This is a test",
+					Configuration: nil,
+					Run: func(_ []string) error {
+						called = "root"
+						return nil
+					},
+				}
+			},
+			expected: expected{error: true},
+		},
+		{
+			desc: "one sub command",
+			args: []string{"", "sub1"},
+			command: func() *Command {
+				rootCmd := &Command{
+					Name:          "test",
+					Description:   "This is a test",
+					Configuration: nil,
+					Run: func(_ []string) error {
+						called += "root"
+						return nil
+					},
+				}
+
+				_ = rootCmd.AddCommand(&Command{
+					Name:          "sub1",
+					Description:   "sub1",
+					Configuration: nil,
+					Run: func(_ []string) error {
+						called += "sub1"
+						return nil
+					},
+				})
+
+				return rootCmd
+			},
+			expected: expected{result: "sub1"},
+		},
+		{
+			desc: "one sub command, with argument, command not found",
+			args: []string{"", "sub1", "echo"},
+			command: func() *Command {
+				rootCmd := &Command{
+					Name:          "test",
+					Description:   "This is a test",
+					Configuration: nil,
+					Run: func(_ []string) error {
+						called += "root"
+						return nil
+					},
+				}
+
+				_ = rootCmd.AddCommand(&Command{
+					Name:          "sub1",
+					Description:   "sub1",
+					Configuration: nil,
+					Run: func(_ []string) error {
+						called += "sub1"
+						return nil
+					},
+				})
+
+				return rootCmd
+			},
+			expected: expected{error: true},
+		},
+		{
+			desc: "two sub commands",
+			args: []string{"", "sub2"},
+			command: func() *Command {
+				rootCmd := &Command{
+					Name:          "test",
+					Description:   "This is a test",
+					Configuration: nil,
+					Run: func(_ []string) error {
+						called += "root"
+						return nil
+					},
+				}
+
+				_ = rootCmd.AddCommand(&Command{
+					Name:          "sub1",
+					Description:   "sub1",
+					Configuration: nil,
+					Run: func(_ []string) error {
+						called += "sub1"
+						return nil
+					},
+				})
+
+				_ = rootCmd.AddCommand(&Command{
+					Name:          "sub2",
+					Description:   "sub2",
+					Configuration: nil,
+					Run: func(_ []string) error {
+						called += "sub2"
+						return nil
+					},
+				})
+
+				return rootCmd
+			},
+			expected: expected{result: "sub2"},
+		},
+		{
+			desc: "command with sub sub command, call sub command",
+			args: []string{"", "sub1"},
+			command: func() *Command {
+				rootCmd := &Command{
+					Name:          "test",
+					Description:   "This is a test",
+					Configuration: nil,
+					Run: func(_ []string) error {
+						called += "root"
+						return nil
+					},
+				}
+
+				sub1 := &Command{
+					Name:          "sub1",
+					Description:   "sub1",
+					Configuration: nil,
+					Run: func(_ []string) error {
+						called += "sub1"
+						return nil
+					},
+				}
+				_ = rootCmd.AddCommand(sub1)
+
+				_ = sub1.AddCommand(&Command{
+					Name:          "sub2",
+					Description:   "sub2",
+					Configuration: nil,
+					Run: func(_ []string) error {
+						called += "sub2"
+						return nil
+					},
+				})
+
+				return rootCmd
+			},
+			expected: expected{result: "sub1"},
+		},
+		{
+			desc: "command with sub sub command, call sub sub command",
+			args: []string{"", "sub1", "sub2"},
+			command: func() *Command {
+				rootCmd := &Command{
+					Name:          "test",
+					Description:   "This is a test",
+					Configuration: nil,
+					Run: func(_ []string) error {
+						called += "root"
+						return nil
+					},
+				}
+
+				sub1 := &Command{
+					Name:          "sub1",
+					Description:   "sub1",
+					Configuration: nil,
+					Run: func(_ []string) error {
+						called += "sub1"
+						return nil
+					},
+				}
+				_ = rootCmd.AddCommand(sub1)
+
+				_ = sub1.AddCommand(&Command{
+					Name:          "sub2",
+					Description:   "sub2",
+					Configuration: nil,
+					Run: func(_ []string) error {
+						called += "sub2"
+						return nil
+					},
+				})
+
+				return rootCmd
+			},
+			expected: expected{result: "sub2"},
+		},
+		{
+			desc: "command with sub command, call root command explicitly",
+			args: []string{"", "root"},
+			command: func() *Command {
+				rootCmd := &Command{
+					Name:          "root",
+					Description:   "This is a test",
+					Configuration: nil,
+					Run: func(_ []string) error {
+						called += "root"
+						return nil
+					},
+				}
+
+				_ = rootCmd.AddCommand(&Command{
+					Name:          "sub1",
+					Description:   "sub1",
+					Configuration: nil,
+					Run: func(_ []string) error {
+						called += "sub1"
+						return nil
+					},
+				})
+
+				return rootCmd
+			},
+			expected: expected{result: "root"},
+		},
+		{
+			desc: "command with sub command, call root command implicitly",
+			args: []string{""},
+			command: func() *Command {
+				rootCmd := &Command{
+					Name:          "root",
+					Description:   "This is a test",
+					Configuration: nil,
+					Run: func(_ []string) error {
+						called += "root"
+						return nil
+					},
+				}
+
+				_ = rootCmd.AddCommand(&Command{
+					Name:          "sub1",
+					Description:   "sub1",
+					Configuration: nil,
+					Run: func(_ []string) error {
+						called += "sub1"
+						return nil
+					},
+				})
+
+				return rootCmd
+			},
+			expected: expected{result: "root"},
+		},
+		{
+			desc: "command with sub command, call sub command which has no run",
+			args: []string{"", "sub1"},
+			command: func() *Command {
+				rootCmd := &Command{
+					Name:          "root",
+					Description:   "This is a test",
+					Configuration: nil,
+					Run: func(_ []string) error {
+						called += "root"
+						return nil
+					},
+				}
+
+				_ = rootCmd.AddCommand(&Command{
+					Name:          "sub1",
+					Description:   "sub1",
+					Configuration: nil,
+				})
+
+				return rootCmd
+			},
+			expected: expected{error: true},
+		},
+		{
+			desc: "command with sub command, call root command which has no run",
+			args: []string{"", "root"},
+			command: func() *Command {
+				rootCmd := &Command{
+					Name:          "root",
+					Description:   "This is a test",
+					Configuration: nil,
+				}
+
+				_ = rootCmd.AddCommand(&Command{
+					Name:          "sub1",
+					Description:   "sub1",
+					Configuration: nil,
+					Run: func(_ []string) error {
+						called += "sub1"
+						return nil
+					},
+				})
+
+				return rootCmd
+			},
+			expected: expected{error: true},
+		},
+		{
+			desc: "command with sub command, call implicitly root command which has no run",
+			args: []string{""},
+			command: func() *Command {
+				rootCmd := &Command{
+					Name:          "root",
+					Description:   "This is a test",
+					Configuration: nil,
+				}
+
+				_ = rootCmd.AddCommand(&Command{
+					Name:          "sub1",
+					Description:   "sub1",
+					Configuration: nil,
+					Run: func(_ []string) error {
+						called += "sub1"
+						return nil
+					},
+				})
+
+				return rootCmd
+			},
+			expected: expected{error: true},
+		},
+		{
+			desc: "command with sub command, call sub command with arguments",
+			args: []string{"", "sub1", "foobar.txt"},
+			command: func() *Command {
+				rootCmd := &Command{
+					Name:          "root",
+					Description:   "This is a test",
+					Configuration: nil,
+					Run: func(_ []string) error {
+						called = "root"
+						return nil
+					},
+				}
+
+				_ = rootCmd.AddCommand(&Command{
+					Name:          "sub1",
+					Description:   "sub1",
+					Configuration: nil,
+					AllowArg:      true,
+					Run: func(args []string) error {
+						called += "sub1-" + strings.Join(args, "-")
+						return nil
+					},
+				})
+
+				return rootCmd
+			},
+			expected: expected{result: "sub1-foobar.txt"},
+		},
+		{
+			desc: "command with sub command, call root command with arguments",
+			args: []string{"", "foobar.txt"},
+			command: func() *Command {
+				rootCmd := &Command{
+					Name:          "root",
+					Description:   "This is a test",
+					Configuration: nil,
+					AllowArg:      true,
+					Run: func(args []string) error {
+						called += "root-" + strings.Join(args, "-")
+						return nil
+					},
+				}
+
+				_ = rootCmd.AddCommand(&Command{
+					Name:          "sub1",
+					Description:   "sub1",
+					Configuration: nil,
+					Run: func(args []string) error {
+						called += "sub1-" + strings.Join(args, "-")
+						return nil
+					},
+				})
+
+				return rootCmd
+			},
+			expected: expected{result: "root-foobar.txt"},
+		},
+		{
+			desc: "command with sub command, call sub command with flags",
+			args: []string{"", "sub1", "--foo=bar", "--fii=bir"},
+			command: func() *Command {
+				rootCmd := &Command{
+					Name:          "root",
+					Description:   "This is a test",
+					Configuration: nil,
+					Run: func(_ []string) error {
+						called = "root"
+						return nil
+					},
+				}
+
+				_ = rootCmd.AddCommand(&Command{
+					Name:          "sub1",
+					Description:   "sub1",
+					Configuration: nil,
+					Run: func(args []string) error {
+						called += "sub1-" + strings.Join(args, "")
+						return nil
+					},
+				})
+
+				return rootCmd
+			},
+			expected: expected{result: "sub1---foo=bar--fii=bir"},
+		},
+		{
+			desc: "command with sub command, call explicitly root command with flags",
+			args: []string{"", "root", "--foo=bar", "--fii=bir"},
+			command: func() *Command {
+				rootCmd := &Command{
+					Name:          "root",
+					Description:   "This is a test",
+					Configuration: nil,
+					Run: func(args []string) error {
+						called += "root-" + strings.Join(args, "")
+						return nil
+					},
+				}
+
+				_ = rootCmd.AddCommand(&Command{
+					Name:          "sub1",
+					Description:   "sub1",
+					Configuration: nil,
+					Run: func(args []string) error {
+						called += "sub1-" + strings.Join(args, "")
+						return nil
+					},
+				})
+
+				return rootCmd
+			},
+			expected: expected{result: "root---foo=bar--fii=bir"},
+		},
+		{
+			desc: "command with sub command, call implicitly root command with flags",
+			args: []string{"", "--foo=bar", "--fii=bir"},
+			command: func() *Command {
+				rootCmd := &Command{
+					Name:          "root",
+					Description:   "This is a test",
+					Configuration: nil,
+					Run: func(args []string) error {
+						called += "root-" + strings.Join(args, "")
+						return nil
+					},
+				}
+
+				_ = rootCmd.AddCommand(&Command{
+					Name:          "sub1",
+					Description:   "sub1",
+					Configuration: nil,
+					Run: func(args []string) error {
+						called += "sub1-" + strings.Join(args, "")
+						return nil
+					},
+				})
+
+				return rootCmd
+			},
+			expected: expected{result: "root---foo=bar--fii=bir"},
+		},
+		{
+			desc: "sub command help",
+			args: []string{"", "test", "subtest", "--help"},
+			command: func() *Command {
+				rootCmd := &Command{
+					Name:      "test",
+					Resources: []ResourceLoader{&FlagLoader{}},
+				}
+
+				subCmd := &Command{
+					Name:      "subtest",
+					Resources: []ResourceLoader{&FlagLoader{}},
+				}
+
+				err := rootCmd.AddCommand(subCmd)
+				require.NoError(t, err)
+
+				subSubCmd := &Command{
+					Name:      "subsubtest",
+					Resources: []ResourceLoader{&FlagLoader{}},
+				}
+
+				err = subCmd.AddCommand(subSubCmd)
+				require.NoError(t, err)
+
+				subSubSubCmd := &Command{
+					Name:      "subsubsubtest",
+					Resources: []ResourceLoader{&FlagLoader{}},
+					Run: func([]string) error {
+						called = "subsubsubtest"
+						return nil
+					},
+				}
+
+				err = subSubCmd.AddCommand(subSubSubCmd)
+				require.NoError(t, err)
+
+				return rootCmd
+			},
+			expected: expected{},
+		},
+		{
+			desc: "sub sub command help",
+			args: []string{"", "test", "subtest", "subsubtest", "--help"},
+			command: func() *Command {
+				rootCmd := &Command{
+					Name:      "test",
+					Resources: []ResourceLoader{&FlagLoader{}},
+				}
+
+				subCmd := &Command{
+					Name:      "subtest",
+					Resources: []ResourceLoader{&FlagLoader{}},
+				}
+
+				err := rootCmd.AddCommand(subCmd)
+				require.NoError(t, err)
+
+				subSubCmd := &Command{
+					Name:      "subsubtest",
+					Resources: []ResourceLoader{&FlagLoader{}},
+				}
+
+				err = subCmd.AddCommand(subSubCmd)
+				require.NoError(t, err)
+
+				subSubSubCmd := &Command{
+					Name:      "subsubsubtest",
+					Resources: []ResourceLoader{&FlagLoader{}},
+					Run: func([]string) error {
+						called = "subsubsubtest"
+						return nil
+					},
+				}
+
+				err = subSubCmd.AddCommand(subSubSubCmd)
+				require.NoError(t, err)
+
+				return rootCmd
+			},
+			expected: expected{},
+		},
+	}
+
+	for _, test := range testCases {
+		t.Run(test.desc, func(t *testing.T) {
+			defer func() {
+				called = ""
+			}()
+
+			err := execute(test.command(), test.args, true)
+
+			if test.expected.error {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+				assert.Equal(t, test.expected.result, called)
+			}
+		})
+	}
+}
+
+func Test_execute_configuration(t *testing.T) {
+	rootCmd := &Command{
+		Name:          "root",
+		Description:   "This is a test",
+		Configuration: nil,
+		Run: func(_ []string) error {
+			return nil
+		},
+	}
+
+	element := &Yo{
+		Fuu: "test",
+	}
+
+	sub1 := &Command{
+		Name:          "sub1",
+		Description:   "sub1",
+		Configuration: element,
+		Resources:     []ResourceLoader{&FlagLoader{}},
+		Run: func(args []string) error {
+			return nil
+		},
+	}
+	err := rootCmd.AddCommand(sub1)
+	require.NoError(t, err)
+
+	args := []string{"", "sub1", "--foo=bar", "--fii=bir", "--yi"}
+
+	err = execute(rootCmd, args, true)
+	require.NoError(t, err)
+
+	expected := &Yo{
+		Foo: "bar",
+		Fii: "bir",
+		Fuu: "test",
+		Yi: &Yi{
+			Foo: "foo",
+			Fii: "fii",
+		},
+	}
+	assert.Equal(t, expected, element)
+}
+
+func Test_execute_configuration_file(t *testing.T) {
+	testCases := []struct {
+		desc string
+		args []string
+	}{
+		{
+			desc: "configFile arg in camel case",
+			args: []string{"", "sub1", "--configFile=./fixtures/config.toml"},
+		},
+		{
+			desc: "configfile arg in lower case",
+			args: []string{"", "sub1", "--configfile=./fixtures/config.toml"},
+		},
+	}
+
+	for _, test := range testCases {
+		t.Run(test.desc, func(t *testing.T) {
+			rootCmd := &Command{
+				Name:          "root",
+				Description:   "This is a test",
+				Configuration: nil,
+				Run: func(_ []string) error {
+					return nil
+				},
+			}
+
+			element := &Yo{
+				Fuu: "test",
+			}
+
+			fileLoader := &FileLoader{
+				ConfigFileFlag: "configFile",
+				BasePaths:      []string{"/etc/traefik/traefik", "$XDG_CONFIG_HOME/traefik", "$HOME/.config/traefik", "./traefik"},
+			}
+
+			sub1 := &Command{
+				Name:          "sub1",
+				Description:   "sub1",
+				Configuration: element,
+				Resources:     []ResourceLoader{fileLoader, &FlagLoader{}},
+				Run: func(args []string) error {
+					return nil
+				},
+			}
+			err := rootCmd.AddCommand(sub1)
+			require.NoError(t, err)
+
+			err = execute(rootCmd, test.args, true)
+			require.NoError(t, err)
+
+			expected := &Yo{
+				Foo: "bar",
+				Fii: "bir",
+				Fuu: "test",
+				Yi: &Yi{
+					Foo: "foo",
+					Fii: "fii",
+				},
+			}
+			assert.Equal(t, expected, element)
+		})
+	}
+}
 
 func Test_execute_help(t *testing.T) {
 	element := &Yo{
@@ -899,42 +905,42 @@ Flags:
 `, string(out))
 }
 
-// func TestName(t *testing.T) {
-// 	rootCmd := &Command{
-// 		Name:      "test",
-// 		Resources: []ResourceLoader{&FlagLoader{}},
-// 	}
-//
-// 	subCmd := &Command{
-// 		Name:      "subtest",
-// 		Resources: []ResourceLoader{&FlagLoader{}},
-// 	}
-//
-// 	err := rootCmd.AddCommand(subCmd)
-// 	require.NoError(t, err)
-//
-// 	subSubCmd := &Command{
-// 		Name:      "subsubtest",
-// 		Resources: []ResourceLoader{&FlagLoader{}},
-// 		Run: func([]string) error {
-// 			return nil
-// 		},
-// 	}
-//
-// 	err = subCmd.AddCommand(subSubCmd)
-// 	require.NoError(t, err)
-//
-// 	subSubSubCmd := &Command{
-// 		Name:      "subsubsubtest",
-// 		Resources: []ResourceLoader{&FlagLoader{}},
-// 		Run: func([]string) error {
-// 			return nil
-// 		},
-// 	}
-//
-// 	err = subSubCmd.AddCommand(subSubSubCmd)
-// 	require.NoError(t, err)
-//
-// 	err = execute(rootCmd, []string{"", "test", "subtest", "subsubtest", "subsubsubtest", "--help"}, true)
-// 	require.NoError(t, err)
-// }
+func Test_execute_subCommands(t *testing.T) {
+	rootCmd := &Command{
+		Name:      "test",
+		Resources: []ResourceLoader{&FlagLoader{}},
+	}
+
+	subCmd := &Command{
+		Name:      "subtest",
+		Resources: []ResourceLoader{&FlagLoader{}},
+	}
+
+	err := rootCmd.AddCommand(subCmd)
+	require.NoError(t, err)
+
+	subSubCmd := &Command{
+		Name:      "subsubtest",
+		Resources: []ResourceLoader{&FlagLoader{}},
+		Run: func([]string) error {
+			return nil
+		},
+	}
+
+	err = subCmd.AddCommand(subSubCmd)
+	require.NoError(t, err)
+
+	subSubSubCmd := &Command{
+		Name:      "subsubsubtest",
+		Resources: []ResourceLoader{&FlagLoader{}},
+		Run: func([]string) error {
+			return nil
+		},
+	}
+
+	err = subSubCmd.AddCommand(subSubSubCmd)
+	require.NoError(t, err)
+
+	err = execute(rootCmd, []string{"", "test", "subtest", "subsubtest", "subsubsubtest", "--help"}, true)
+	require.NoError(t, err)
+}
