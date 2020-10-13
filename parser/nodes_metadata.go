@@ -43,10 +43,14 @@ func (m metadata) Add(element interface{}, node *Node) error {
 }
 
 func (m metadata) browseChildren(fType reflect.Type, node *Node) error {
+	errs := make([]string, 0)
 	for _, child := range node.Children {
 		if err := m.add(fType, child); err != nil {
-			return err
+			errs = append(errs, err.Error())
 		}
+	}
+	if len(errs) > 0 {
+		return errors.New(strings.Join(errs, ", "))
 	}
 	return nil
 }
