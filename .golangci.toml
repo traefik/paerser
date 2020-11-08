@@ -41,6 +41,9 @@
     "nestif",
     "nlreturn",
     "exhaustive",
+    "wrapcheck",
+    "tparallel",
+    "exhaustivestruct",
   ]
 
 [issues]
