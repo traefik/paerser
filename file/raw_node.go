@@ -28,6 +28,9 @@ func decodeRaw(node *parser.Node, vData reflect.Value, filters ...string) error 
 	sortedKeys := sortKeys(vData, filters)
 
 	for _, key := range sortedKeys {
+		if key.Kind() == reflect.Invalid {
+			continue
+		}
 		if vData.MapIndex(key).IsNil() {
 			continue
 		}
