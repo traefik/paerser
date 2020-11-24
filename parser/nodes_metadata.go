@@ -131,6 +131,10 @@ func (m metadata) add(rootType reflect.Type, node *Node) error {
 }
 
 func (m metadata) findTypedField(rType reflect.Type, node *Node) (reflect.StructField, error) {
+	if rType.Kind() != reflect.Struct {
+		return reflect.StructField{}, fmt.Errorf("field not found, node: %s", node.Name)
+	}
+
 	for i := 0; i < rType.NumField(); i++ {
 		cField := rType.Field(i)
 

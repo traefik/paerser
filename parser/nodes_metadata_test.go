@@ -921,6 +921,23 @@ func TestAddMetadata(t *testing.T) {
 			}},
 		},
 		{
+			desc: "invalid slice type",
+			tree: &Node{
+				Name: "traefik",
+				Children: []*Node{
+					{Name: "Foo", Children: []*Node{
+						{Name: "[0]", Children: []*Node{
+							{Name: "Field1", Value: "A"},
+						}},
+					}},
+				},
+			},
+			structure: struct {
+				Foo []string
+			}{},
+			expected: expected{error: true},
+		},
+		{
 			desc: "embedded",
 			tree: &Node{
 				Name: "traefik",
