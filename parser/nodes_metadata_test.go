@@ -2,7 +2,6 @@ package parser
 
 import (
 	"encoding/json"
-	"fmt"
 	"reflect"
 	"testing"
 
@@ -1070,7 +1069,7 @@ func TestAddMetadata(t *testing.T) {
 				if !assert.Equal(t, test.expected.node, test.tree) {
 					bytes, errM := json.MarshalIndent(test.tree, "", "  ")
 					require.NoError(t, errM)
-					fmt.Println(string(bytes))
+					t.Log(string(bytes))
 				}
 			}
 		})

@@ -2,7 +2,6 @@ package parser
 
 import (
 	"encoding/json"
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -253,7 +252,7 @@ func TestDecodeToNode(t *testing.T) {
 				if !assert.Equal(t, test.expected.node, out) {
 					bytes, err := json.MarshalIndent(out, "", "  ")
 					require.NoError(t, err)
-					fmt.Println(string(bytes))
+					t.Log(string(bytes))
 				}
 			}
 		})

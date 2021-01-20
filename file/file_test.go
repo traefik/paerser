@@ -12,6 +12,10 @@ func TestDecode_TOML(t *testing.T) {
 	f, err := ioutil.TempFile(t.TempDir(), "traefik-config-*.toml")
 	require.NoError(t, err)
 
+	t.Cleanup(func() {
+		_ = f.Close()
+	})
+
 	_, err = f.Write([]byte(`
 foo = "bar"
 fii = "bir"
@@ -91,6 +95,10 @@ name = "test"
 func TestDecode_YAML(t *testing.T) {
 	f, err := ioutil.TempFile(t.TempDir(), "traefik-config-*.yaml")
 	require.NoError(t, err)
+
+	t.Cleanup(func() {
+		_ = f.Close()
+	})
 
 	_, err = f.Write([]byte(`
 foo: bar

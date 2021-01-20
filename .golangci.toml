@@ -29,6 +29,9 @@
   [linters-settings.gocognit]
     min-complexity = 65 # default 30
 
+  [linters-settings.gofumpt]
+    extra-rules = true
+
 [linters]
   enable-all = true
   disable = [

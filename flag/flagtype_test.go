@@ -20,9 +20,8 @@ func Test_getFlagTypes(t *testing.T) {
 			expected: map[string]reflect.Kind{},
 		},
 		{
-			desc: "no fields",
-			element: &struct {
-			}{},
+			desc:     "no fields",
+			element:  &struct{}{},
 			expected: map[string]reflect.Kind{},
 		},
 		{
