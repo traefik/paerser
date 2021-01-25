@@ -45,7 +45,7 @@ func (d Duration) MarshalJSON() ([]byte, error) {
 // UnmarshalJSON deserializes the given text into a duration value.
 func (d *Duration) UnmarshalJSON(text []byte) error {
 	if v, err := strconv.ParseInt(string(text), 10, 64); err == nil {
-		*d = Duration(time.Duration(v))
+		*d = Duration(time.Duration(v) * time.Second)
 		return nil
 	}
 
