@@ -46,6 +46,22 @@ func TestDuration_Set(t *testing.T) {
 	}
 }
 
+func TestDuration_MarshalJSON(t *testing.T) {
+	d := Duration(time.Second)
+
+	b, err := d.MarshalJSON()
+	require.NoError(t, err)
+
+	assert.Equal(t, []byte(`"1000000000ns"`), b)
+
+	// Check that marshal value is unmarchable.
+	var ud Duration
+	err = ud.UnmarshalJSON(b)
+	require.NoError(t, err)
+
+	assert.Equal(t, Duration(time.Second), ud)
+}
+
 func TestDuration_UnmarshalJSON(t *testing.T) {
 	testCases := []struct {
 		desc     string
