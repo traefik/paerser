@@ -39,8 +39,7 @@ func (d *Duration) UnmarshalText(text []byte) error {
 
 // MarshalJSON serializes the given duration value.
 func (d Duration) MarshalJSON() ([]byte, error) {
-	v := time.Duration(time.Duration(d).Nanoseconds())
-	return []byte(`"` + v.String() + `"`), nil
+	return []byte(`"` + time.Duration(d).String() + `"`), nil
 }
 
 // UnmarshalJSON deserializes the given text into a duration value.
