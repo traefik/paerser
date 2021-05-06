@@ -53,13 +53,21 @@ func TestDuration_MarshalJSON(t *testing.T) {
 	require.NoError(t, err)
 
 	assert.Equal(t, []byte(`"1000000000ns"`), b)
+}
 
-	// Check that marshal value is unmarchable.
+func TestDuration_JSON_bijection(t *testing.T) {
+	d := Duration(time.Second)
+
+	b, err := d.MarshalJSON()
+	require.NoError(t, err)
+
+	assert.Equal(t, []byte(`"1000000000ns"`), b)
+
 	var ud Duration
 	err = ud.UnmarshalJSON(b)
 	require.NoError(t, err)
 
-	assert.Equal(t, Duration(time.Second), ud)
+	assert.Equal(t, d, ud)
 }
 
 func TestDuration_UnmarshalJSON(t *testing.T) {
