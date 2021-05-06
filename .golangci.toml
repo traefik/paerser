@@ -35,19 +35,25 @@
 [linters]
   enable-all = true
   disable = [
-    "testpackage",
+    "maligned", # Deprecated
+    "scopelint", # Deprecated
+    "interfacer", # Deprecated
     "dupl",
     "lll",
-    "gomnd",
-    "wsl",
-    "goerr113",
     "nestif",
-    "nlreturn",
-    "exhaustive",
+    "cyclop", # duplicate of gocyclo
+    "gomnd",
+    "goerr113",
     "wrapcheck",
-    "tparallel",
+    "nlreturn",
+    "wsl",
+    "exhaustive",
     "exhaustivestruct",
+    "tparallel",
+    "testpackage",
     "paralleltest",
+    "ifshort",
+    "forcetypeassert",
   ]
 
 [issues]

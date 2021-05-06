@@ -253,8 +253,7 @@ func (f filler) setSliceAsStruct(field reflect.Value, node *Node) error {
 
 	// use Ptr to allow "SetDefaults"
 	value := reflect.New(reflect.PtrTo(field.Type().Elem()))
-	err := f.setPtr(value, node)
-	if err != nil {
+	if err := f.setPtr(value, node); err != nil {
 		return err
 	}
 
