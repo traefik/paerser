@@ -37,6 +37,7 @@
   disable = [
     "maligned", # Deprecated
     "scopelint", # Deprecated
+    "golint", # Deprecated
     "interfacer", # Deprecated
     "dupl",
     "lll",
