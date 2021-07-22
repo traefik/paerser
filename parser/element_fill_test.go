@@ -735,6 +735,31 @@ func TestFill(t *testing.T) {
 			},
 		},
 		{
+			desc: "empty map",
+			node: &Node{
+				Name: "traefik",
+				Kind: reflect.Struct,
+				Children: []*Node{
+					{
+						Name:      "Foo",
+						FieldName: "Foo",
+						Kind:      reflect.Map,
+						Children:  []*Node{},
+					},
+				},
+			},
+			element: &struct {
+				Foo map[string]string
+			}{},
+			expected: expected{
+				element: &struct {
+					Foo map[string]string
+				}{
+					Foo: map[string]string{},
+				},
+			},
+		},
+		{
 			desc: "slice string",
 			node: &Node{
 				Name: "traefik",
