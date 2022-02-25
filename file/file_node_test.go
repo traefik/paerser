@@ -112,14 +112,14 @@ func Test_decodeFileToNode_Toml(t *testing.T) {
 				{Name: "filters", Children: []*parser.Node{
 					{Name: "minDuration", Value: "42"},
 					{Name: "retryAttempts", Value: "true"},
-					{Name: "statusCodes", Value: "foobar,foobar"},
+					{Name: "statusCodes", Value: "foobar║foobar"},
 				}},
 				{Name: "format", Value: "foobar"},
 			}},
 			{Name: "api", Children: []*parser.Node{
 				{Name: "dashboard", Value: "true"},
 				{Name: "entryPoint", Value: "foobar"},
-				{Name: "middlewares", Value: "foobar,foobar"},
+				{Name: "middlewares", Value: "foobar║foobar"},
 				{Name: "statistics", Children: []*parser.Node{
 					{Name: "recentErrors", Value: "42"},
 				}},
@@ -135,7 +135,7 @@ func Test_decodeFileToNode_Toml(t *testing.T) {
 								{Name: "delayBeforeCheck", Value: "42"},
 								{Name: "disablePropagationCheck", Value: "true"},
 								{Name: "provider", Value: "foobar"},
-								{Name: "resolvers", Value: "foobar,foobar"},
+								{Name: "resolvers", Value: "foobar║foobar"},
 							}},
 							{Name: "email", Value: "foobar"},
 							{Name: "entryPoint", Value: "foobar"},
@@ -154,11 +154,11 @@ func Test_decodeFileToNode_Toml(t *testing.T) {
 					{Name: "address", Value: "foobar"},
 					{Name: "forwardedHeaders", Children: []*parser.Node{
 						{Name: "insecure", Value: "true"},
-						{Name: "trustedIPs", Value: "foobar,foobar"},
+						{Name: "trustedIPs", Value: "foobar║foobar"},
 					}},
 					{Name: "proxyProtocol", Children: []*parser.Node{
 						{Name: "insecure", Value: "true"},
-						{Name: "trustedIPs", Value: "foobar,foobar"},
+						{Name: "trustedIPs", Value: "foobar║foobar"},
 					}},
 					{Name: "transport", Children: []*parser.Node{
 						{Name: "lifeCycle", Children: []*parser.Node{
@@ -202,9 +202,9 @@ func Test_decodeFileToNode_Toml(t *testing.T) {
 					{Name: "username", Value: "foobar"},
 				}},
 				{Name: "prometheus", Children: []*parser.Node{
-					{Name: "buckets", Value: "42,42"},
+					{Name: "buckets", Value: "42║42"},
 					{Name: "entryPoint", Value: "foobar"},
-					{Name: "middlewares", Value: "foobar,foobar"},
+					{Name: "middlewares", Value: "foobar║foobar"},
 				}},
 				{Name: "statsD", Children: []*parser.Node{
 					{Name: "address", Value: "foobar"},
@@ -213,7 +213,7 @@ func Test_decodeFileToNode_Toml(t *testing.T) {
 			}},
 			{Name: "ping", Children: []*parser.Node{
 				{Name: "entryPoint", Value: "foobar"},
-				{Name: "middlewares", Value: "foobar,foobar"},
+				{Name: "middlewares", Value: "foobar║foobar"},
 			}},
 			{Name: "providers", Children: []*parser.Node{
 				{Name: "docker", Children: []*parser.Node{
@@ -248,7 +248,7 @@ func Test_decodeFileToNode_Toml(t *testing.T) {
 						{Name: "endpoint", Value: "foobar"},
 						{Name: "ingressClass", Value: "foobar"},
 						{Name: "labelSelector", Value: "foobar"},
-						{Name: "namespaces", Value: "foobar,foobar"},
+						{Name: "namespaces", Value: "foobar║foobar"},
 						{Name: "token", Value: "foobar"},
 					},
 				},
@@ -263,7 +263,7 @@ func Test_decodeFileToNode_Toml(t *testing.T) {
 						{Name: "publishedService", Value: "foobar"},
 					}},
 					{Name: "labelSelector", Value: "foobar"},
-					{Name: "namespaces", Value: "foobar,foobar"},
+					{Name: "namespaces", Value: "foobar║foobar"},
 					{Name: "token", Value: "foobar"},
 				}},
 				{Name: "marathon", Children: []*parser.Node{
@@ -315,7 +315,7 @@ func Test_decodeFileToNode_Toml(t *testing.T) {
 				}},
 				{Name: "insecureSkipVerify", Value: "true"},
 				{Name: "maxIdleConnsPerHost", Value: "42"},
-				{Name: "rootCAs", Value: "foobar,foobar"},
+				{Name: "rootCAs", Value: "foobar║foobar"},
 			}},
 			{Name: "tracing", Children: []*parser.Node{
 				{Name: "datadog", Children: []*parser.Node{
@@ -392,14 +392,14 @@ func Test_decodeFileToNode_Yaml(t *testing.T) {
 				{Name: "filters", Children: []*parser.Node{
 					{Name: "minDuration", Value: "42"},
 					{Name: "retryAttempts", Value: "true"},
-					{Name: "statusCodes", Value: "foobar,foobar"},
+					{Name: "statusCodes", Value: "foobar║foobar"},
 				}},
 				{Name: "format", Value: "foobar"},
 			}},
 			{Name: "api", Children: []*parser.Node{
 				{Name: "dashboard", Value: "true"},
 				{Name: "entryPoint", Value: "foobar"},
-				{Name: "middlewares", Value: "foobar,foobar"},
+				{Name: "middlewares", Value: "foobar║foobar"},
 				{Name: "statistics", Children: []*parser.Node{
 					{Name: "recentErrors", Value: "42"},
 				}},
@@ -415,7 +415,7 @@ func Test_decodeFileToNode_Yaml(t *testing.T) {
 								{Name: "delayBeforeCheck", Value: "42"},
 								{Name: "disablePropagationCheck", Value: "true"},
 								{Name: "provider", Value: "foobar"},
-								{Name: "resolvers", Value: "foobar,foobar"},
+								{Name: "resolvers", Value: "foobar║foobar"},
 							}},
 							{Name: "email", Value: "foobar"},
 							{Name: "entryPoint", Value: "foobar"},
@@ -434,11 +434,11 @@ func Test_decodeFileToNode_Yaml(t *testing.T) {
 					{Name: "address", Value: "foobar"},
 					{Name: "forwardedHeaders", Children: []*parser.Node{
 						{Name: "insecure", Value: "true"},
-						{Name: "trustedIPs", Value: "foobar,foobar"},
+						{Name: "trustedIPs", Value: "foobar║foobar"},
 					}},
 					{Name: "proxyProtocol", Children: []*parser.Node{
 						{Name: "insecure", Value: "true"},
-						{Name: "trustedIPs", Value: "foobar,foobar"},
+						{Name: "trustedIPs", Value: "foobar║foobar"},
 					}},
 					{Name: "transport", Children: []*parser.Node{
 						{Name: "lifeCycle", Children: []*parser.Node{
@@ -482,9 +482,9 @@ func Test_decodeFileToNode_Yaml(t *testing.T) {
 					{Name: "username", Value: "foobar"},
 				}},
 				{Name: "prometheus", Children: []*parser.Node{
-					{Name: "buckets", Value: "42,42"},
+					{Name: "buckets", Value: "42║42"},
 					{Name: "entryPoint", Value: "foobar"},
-					{Name: "middlewares", Value: "foobar,foobar"},
+					{Name: "middlewares", Value: "foobar║foobar"},
 				}},
 				{Name: "statsD", Children: []*parser.Node{
 					{Name: "address", Value: "foobar"},
@@ -493,7 +493,7 @@ func Test_decodeFileToNode_Yaml(t *testing.T) {
 			}},
 			{Name: "ping", Children: []*parser.Node{
 				{Name: "entryPoint", Value: "foobar"},
-				{Name: "middlewares", Value: "foobar,foobar"},
+				{Name: "middlewares", Value: "foobar║foobar"},
 			}},
 			{Name: "providers", Children: []*parser.Node{
 				{Name: "docker", Children: []*parser.Node{
@@ -528,7 +528,7 @@ func Test_decodeFileToNode_Yaml(t *testing.T) {
 						{Name: "endpoint", Value: "foobar"},
 						{Name: "ingressClass", Value: "foobar"},
 						{Name: "labelSelector", Value: "foobar"},
-						{Name: "namespaces", Value: "foobar,foobar"},
+						{Name: "namespaces", Value: "foobar║foobar"},
 						{Name: "token", Value: "foobar"},
 					},
 				},
@@ -543,7 +543,7 @@ func Test_decodeFileToNode_Yaml(t *testing.T) {
 						{Name: "publishedService", Value: "foobar"},
 					}},
 					{Name: "labelSelector", Value: "foobar"},
-					{Name: "namespaces", Value: "foobar,foobar"},
+					{Name: "namespaces", Value: "foobar║foobar"},
 					{Name: "token", Value: "foobar"},
 				}},
 				{Name: "marathon", Children: []*parser.Node{
@@ -595,7 +595,7 @@ func Test_decodeFileToNode_Yaml(t *testing.T) {
 				}},
 				{Name: "insecureSkipVerify", Value: "true"},
 				{Name: "maxIdleConnsPerHost", Value: "42"},
-				{Name: "rootCAs", Value: "foobar,foobar"},
+				{Name: "rootCAs", Value: "foobar║foobar"},
 			}},
 			{Name: "tracing", Children: []*parser.Node{
 				{Name: "datadog", Children: []*parser.Node{

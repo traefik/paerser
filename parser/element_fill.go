@@ -10,6 +10,8 @@ import (
 	"github.com/traefik/paerser/types"
 )
 
+const defaultRawSliceSeparator = ","
+
 type initializer interface {
 	SetDefaults()
 }
@@ -17,15 +19,24 @@ type initializer interface {
 // FillerOpts Options for the filler.
 type FillerOpts struct {
 	AllowSliceAsStruct bool
+	RawSliceSeparator  string
 }
 
 // Fill populates the fields of the element using the information in node.
 func Fill(element interface{}, node *Node, opts FillerOpts) error {
-	return filler{FillerOpts: opts}.Fill(element, node)
+	return newFiller(opts).Fill(element, node)
 }
 
 type filler struct {
 	FillerOpts
+}
+
+func newFiller(opts FillerOpts) filler {
+	if opts.RawSliceSeparator == "" {
+		opts.RawSliceSeparator = defaultRawSliceSeparator
+	}
+
+	return filler{FillerOpts: opts}
 }
 
 // Fill populates the fields of the element using the information in node.
@@ -139,7 +150,7 @@ func (f filler) setSlice(field reflect.Value, node *Node) error {
 		return nil
 	}
 
-	values := strings.Split(node.Value, ",")
+	values := strings.Split(node.Value, f.RawSliceSeparator)
 
 	slice := reflect.MakeSlice(field.Type(), len(values), len(values))
 	field.Set(slice)
