@@ -17,6 +17,15 @@ type Potato struct {
 	Meta map[string]map[string]interface{}
 }
 
+type Ignored struct {
+	String  string                 `label:"-"`
+	StringP *string                `label:"-"`
+	Struct  Tomato                 `label:"-"`
+	StructP *Tomato                `label:"-"`
+	Slice   []string               `label:"-"`
+	Map     map[string]interface{} `label:"-"`
+}
+
 func TestDecode_RawValue(t *testing.T) {
 	testCases := []struct {
 		desc     string
@@ -328,13 +337,49 @@ func TestDecode_RawValue(t *testing.T) {
 				},
 			},
 		},
+		{
+			desc: "Ignore label tag, one element label for each type",
+			elt:  &Ignored{},
+			labels: map[string]string{
+				"traefik.string":       "test1",
+				"traefik.stringp":      "test1",
+				"traefik.struct.name":  "test1",
+				"traefik.structp.name": "test1",
+				"traefik.slice":        "test1",
+				"traefik.map.aaa":      "test1",
+			},
+			expected: &Ignored{
+				String:  "",
+				StringP: nil,
+				Struct:  Tomato{},
+				StructP: nil,
+				Slice:   nil,
+				Map:     nil,
+			},
+		},
+		{
+			desc: "Ignore label tag, one empty label for each type",
+			elt:  &Ignored{},
+			labels: map[string]string{
+				"traefik.string":  "",
+				"traefik.stringp": "",
+				"traefik.struct":  "",
+				"traefik.structp": "",
+				"traefik.slice":   "",
+				"traefik.map":     "",
+			},
+			expected: &Ignored{
+				String:  "",
+				StringP: nil,
+				Struct:  Tomato{},
+				StructP: nil,
+				Slice:   nil,
+				Map:     nil,
+			},
+		},
 	}
 
 	for _, test := range testCases {
-		if test.desc != "level 3" {
-			continue
-		}
-
 		test := test
 		t.Run(test.desc, func(t *testing.T) {
 			err := Decode(test.labels, test.elt, "traefik")

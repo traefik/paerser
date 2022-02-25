@@ -457,6 +457,15 @@ func TestEncodeToNode(t *testing.T) {
 			expected: expected{node: &Node{Name: "traefik"}},
 		},
 		{
+			desc: "ignore map",
+			element: struct {
+				Bar map[string]string `label:"-"`
+			}{
+				Bar: map[string]string{"huu": "hii"},
+			},
+			expected: expected{node: &Node{Name: "traefik"}},
+		},
+		{
 			desc: "map with non string key",
 			element: struct {
 				Foo struct {

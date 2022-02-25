@@ -47,7 +47,7 @@ func (f filler) Fill(element interface{}, node *Node) error {
 }
 
 func (f filler) fill(field reflect.Value, node *Node) error {
-	// related to allow-empty tag
+	// related to allow-empty or ignore tag
 	if node.Disabled {
 		return nil
 	}

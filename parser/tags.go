@@ -2,12 +2,14 @@ package parser
 
 const (
 	// TagLabel allows to apply a custom behavior.
-	// - "allowEmpty": allows to create an empty struct.
+	// - "allowEmpty": allows the creation of a type that is supposed to have children
+	// (i.e: struct, pointer of struct, and map), without any children.
 	// - "-": ignore the field.
 	TagLabel = "label"
 
 	// TagFile allows to apply a custom behavior.
-	// - "allowEmpty": allows to create an empty struct.
+	// - "allowEmpty": allows the creation of a type that is supposed to have children
+	// (i.e: struct, pointer of struct, and map), without any children.
 	// - "-": ignore the field.
 	TagFile = "file"
 
