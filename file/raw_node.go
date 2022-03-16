@@ -94,7 +94,7 @@ func decodeRaw(node *parser.Node, vData reflect.Value, filters ...string) error 
 				}
 			}
 
-			child.Value = strings.Join(values, ",")
+			child.Value = strings.Join(values, defaultRawSliceSeparator)
 		case reflect.Map:
 			err := decodeRaw(child, value)
 			if err != nil {

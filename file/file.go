@@ -9,6 +9,8 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+const defaultRawSliceSeparator = "║"
+
 // Decode decodes the given configuration file into the given element.
 // The operation goes through three stages roughly summarized as:
 // file contents -> tree of untyped nodes
@@ -32,7 +34,7 @@ func Decode(filePath string, element interface{}) error {
 		return err
 	}
 
-	return parser.Fill(element, root, parser.FillerOpts{AllowSliceAsStruct: false})
+	return parser.Fill(element, root, parser.FillerOpts{AllowSliceAsStruct: false, RawSliceSeparator: defaultRawSliceSeparator})
 }
 
 // DecodeContent decodes the given configuration file content into the given element.
@@ -78,5 +80,5 @@ func DecodeContent(content, extension string, element interface{}) error {
 		return err
 	}
 
-	return parser.Fill(element, node, parser.FillerOpts{AllowSliceAsStruct: false})
+	return parser.Fill(element, node, parser.FillerOpts{AllowSliceAsStruct: false, RawSliceSeparator: defaultRawSliceSeparator})
 }
