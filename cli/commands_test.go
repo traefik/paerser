@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"strings"
 	"testing"
@@ -862,7 +861,7 @@ func Test_execute_help(t *testing.T) {
 	if err = w.Close(); err != nil {
 		t.Fatal(err)
 	}
-	out, err := ioutil.ReadAll(r)
+	out, err := io.ReadAll(r)
 	if err != nil {
 		t.Fatal(err)
 	}

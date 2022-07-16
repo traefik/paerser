@@ -13,9 +13,9 @@ const defaultRawSliceSeparator = "║"
 
 // Decode decodes the given configuration file into the given element.
 // The operation goes through three stages roughly summarized as:
-// file contents -> tree of untyped nodes
-// untyped nodes -> nodes augmented with metadata such as kind (inferred from element)
-// "typed" nodes -> typed element.
+// - file contents -> tree of untyped nodes
+// - untyped nodes -> nodes augmented with metadata such as kind (inferred from element)
+// - "typed" nodes -> typed element.
 func Decode(filePath string, element interface{}) error {
 	if element == nil {
 		return nil
@@ -39,9 +39,9 @@ func Decode(filePath string, element interface{}) error {
 
 // DecodeContent decodes the given configuration file content into the given element.
 // The operation goes through three stages roughly summarized as:
-// file contents -> tree of untyped nodes
-// untyped nodes -> nodes augmented with metadata such as kind (inferred from element)
-// "typed" nodes -> typed element.
+// - file contents -> tree of untyped nodes
+// - untyped nodes -> nodes augmented with metadata such as kind (inferred from element)
+// - "typed" nodes -> typed element.
 func DecodeContent(content, extension string, element interface{}) error {
 	data := make(map[string]interface{})
 

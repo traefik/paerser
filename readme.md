@@ -93,7 +93,6 @@ package file_test
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 
@@ -118,12 +117,12 @@ type Sub struct {
 }
 
 func ExampleDecode() {
-	tempFile, err := ioutil.TempFile("", "paeser-*.yml")
+	tempFile, err := os.CreateTemp("", "paeser-*.yml")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	defer os.RemoveAll(tempFile.Name())
+	defer func() { _ = os.RemoveAll(tempFile.Name()) }()
 
 	data := `
 foo: aaa

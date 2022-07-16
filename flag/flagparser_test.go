@@ -250,7 +250,7 @@ func TestParse(t *testing.T) {
 			},
 		},
 		{
-			desc: "map struct with sub-map case sensitive",
+			desc: "map struct with sub-map case-sensitive",
 			args: []string{"--foo.Name1.bar.name2.value=firstValue", "--foo.naMe1.bar.name2.value=secondValue"},
 			element: &struct {
 				Foo map[string]struct {

@@ -32,6 +32,7 @@ linters:
     - scopelint # Deprecated
     - golint # Deprecated
     - interfacer # Deprecated
+    - exhaustivestruct # Deprecated
     - cyclop # duplicate of gocyclo
     - dupl
     - lll
@@ -42,7 +43,7 @@ linters:
     - nlreturn
     - wsl
     - exhaustive
-    - exhaustivestruct
+    - exhaustruct
     - tparallel
     - testpackage
     - paralleltest

@@ -1,7 +1,7 @@
 package file
 
 import (
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -9,7 +9,7 @@ import (
 )
 
 func TestDecode_TOML(t *testing.T) {
-	f, err := ioutil.TempFile(t.TempDir(), "traefik-config-*.toml")
+	f, err := os.CreateTemp(t.TempDir(), "traefik-config-*.toml")
 	require.NoError(t, err)
 
 	t.Cleanup(func() {
@@ -93,7 +93,7 @@ name = "test"
 }
 
 func TestDecode_YAML(t *testing.T) {
-	f, err := ioutil.TempFile(t.TempDir(), "traefik-config-*.yaml")
+	f, err := os.CreateTemp(t.TempDir(), "traefik-config-*.yaml")
 	require.NoError(t, err)
 
 	t.Cleanup(func() {

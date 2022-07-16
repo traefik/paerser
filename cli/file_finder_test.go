@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -11,14 +10,14 @@ import (
 )
 
 func TestFinder_Find(t *testing.T) {
-	configFile, err := ioutil.TempFile("", "traefik-file-finder-test-*.toml")
+	configFile, err := os.CreateTemp("", "traefik-file-finder-test-*.toml")
 	require.NoError(t, err)
 
 	defer func() {
 		_ = os.Remove(configFile.Name())
 	}()
 
-	dir, err := ioutil.TempDir("", "traefik-file-finder-test")
+	dir, err := os.MkdirTemp("", "traefik-file-finder-test")
 	require.NoError(t, err)
 
 	defer func() {
@@ -54,7 +53,7 @@ func TestFinder_Find(t *testing.T) {
 			expected:   expected{path: ""},
 		},
 		{
-			desc:       "not found: with non existing config file",
+			desc:       "not found: with non-existing config file",
 			configFile: "/my/path/config.toml",
 			expected:   expected{path: ""},
 		},

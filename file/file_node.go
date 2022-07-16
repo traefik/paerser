@@ -2,7 +2,7 @@ package file
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"reflect"
 	"strings"
@@ -15,7 +15,7 @@ import (
 // decodeFileToNode decodes the configuration in filePath in a tree of untyped nodes.
 // If filters is not empty, it skips any configuration element whose name is not among filters.
 func decodeFileToNode(filePath string, filters ...string) (*parser.Node, error) {
-	content, err := ioutil.ReadFile(filepath.Clean(filePath))
+	content, err := os.ReadFile(filepath.Clean(filePath))
 	if err != nil {
 		return nil, err
 	}
