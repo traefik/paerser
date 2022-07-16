@@ -9,7 +9,7 @@ import (
 
 	"github.com/BurntSushi/toml"
 	"github.com/traefik/paerser/parser"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 // decodeFileToNode decodes the configuration in filePath in a tree of untyped nodes.
