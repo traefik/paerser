@@ -151,6 +151,10 @@ func (f filler) setSlice(field reflect.Value, node *Node) error {
 	}
 
 	values := strings.Split(node.Value, f.RawSliceSeparator)
+	if f.RawSliceSeparator != defaultRawSliceSeparator {
+		// TODO(ldez): this is related to raw map and file. Rethink the node parser.
+		values = values[2:]
+	}
 
 	slice := reflect.MakeSlice(field.Type(), len(values), len(values))
 	field.Set(slice)
@@ -282,10 +286,16 @@ func (f filler) setMap(field reflect.Value, node *Node) error {
 	}
 
 	if field.Type().Elem().Kind() == reflect.Interface {
-		fillRawValue(field, node, false)
+		err := f.fillRawValue(field, node, false)
+		if err != nil {
+			return err
+		}
 
 		for _, child := range node.Children {
-			fillRawValue(field, child, true)
+			err = f.fillRawValue(field, child, true)
+			if err != nil {
+				return err
+			}
 		}
 
 		return nil
@@ -361,22 +371,179 @@ func setFloat(field reflect.Value, value string, bitSize int) error {
 	return nil
 }
 
-func fillRawValue(field reflect.Value, node *Node, subMap bool) {
+func (f filler) fillRawValue(field reflect.Value, node *Node, subMap bool) error {
 	m, ok := node.RawValue.(map[string]interface{})
 	if !ok {
-		return
+		return nil
 	}
 
 	if _, self := m[node.Name]; self || !subMap {
 		for k, v := range m {
-			field.SetMapIndex(reflect.ValueOf(k), reflect.ValueOf(v))
+			if f.RawSliceSeparator == defaultRawSliceSeparator {
+				field.SetMapIndex(reflect.ValueOf(k), reflect.ValueOf(v))
+				continue
+			}
+
+			// TODO(ldez): all the next section is related to raw map and file. Rethink the node parser.
+
+			s, ok := v.(string)
+			if !ok || len(s) == 0 || !strings.HasPrefix(s, f.RawSliceSeparator) {
+				field.SetMapIndex(reflect.ValueOf(k), reflect.ValueOf(v))
+				continue
+			}
+
+			// typed slice
+
+			value, err := f.fillRawTypedSlice(s)
+			if err != nil {
+				return err
+			}
+
+			field.SetMapIndex(reflect.ValueOf(k), value)
 		}
 
-		return
+		return nil
 	}
 
 	p := map[string]interface{}{node.Name: m}
 	node.RawValue = p
 
 	field.SetMapIndex(reflect.ValueOf(node.Name), reflect.ValueOf(p[node.Name]))
+
+	return nil
+}
+
+func (f filler) fillRawTypedSlice(s string) (reflect.Value, error) {
+	raw := strings.Split(s, f.RawSliceSeparator)
+
+	rawType, err := strconv.Atoi(raw[1])
+	if err != nil {
+		return reflect.Value{}, err
+	}
+
+	kind := reflect.Kind(rawType)
+
+	sliceType, err := createRawSliceType(kind)
+	if err != nil {
+		return reflect.Value{}, err
+	}
+
+	slice := reflect.MakeSlice(sliceType, len(raw[2:]), len(raw[2:]))
+
+	for i := 0; i < len(raw[2:]); i++ {
+		switch kind {
+		case reflect.Bool:
+			val, err := strconv.ParseBool(raw[i+2])
+			if err != nil {
+				return reflect.Value{}, fmt.Errorf("parse bool: %s, %w", raw[i+2], err)
+			}
+			slice.Index(i).SetBool(val)
+		case reflect.Int:
+			val, err := strconv.ParseInt(raw[i+2], 10, 64)
+			if err != nil {
+				return reflect.Value{}, fmt.Errorf("parse int: %s, %w", raw[i+2], err)
+			}
+			slice.Index(i).SetInt(val)
+		case reflect.Int8:
+			err := setInt(slice.Index(i), raw[i+2], 8)
+			if err != nil {
+				return reflect.Value{}, fmt.Errorf("parse int8: %s, %w", raw[i+2], err)
+			}
+		case reflect.Int16:
+			err := setInt(slice.Index(i), raw[i+2], 16)
+			if err != nil {
+				return reflect.Value{}, fmt.Errorf("parse int16: %s, %w", raw[i+2], err)
+			}
+		case reflect.Int32:
+			err := setInt(slice.Index(i), raw[i+2], 32)
+			if err != nil {
+				return reflect.Value{}, fmt.Errorf("parse int32: %s, %w", raw[i+2], err)
+			}
+		case reflect.Int64:
+			err := setInt(slice.Index(i), raw[i+2], 64)
+			if err != nil {
+				return reflect.Value{}, fmt.Errorf("parse int64: %s, %w", raw[i+2], err)
+			}
+		case reflect.Uint:
+			val, err := strconv.ParseUint(raw[i+2], 10, 64)
+			if err != nil {
+				return reflect.Value{}, fmt.Errorf("parse uint: %s, %w", raw[i+2], err)
+			}
+			slice.Index(i).SetUint(val)
+		case reflect.Uint8:
+			err := setUint(slice.Index(i), raw[i+2], 8)
+			if err != nil {
+				return reflect.Value{}, fmt.Errorf("parse uint8: %s, %w", raw[i+2], err)
+			}
+		case reflect.Uint16:
+			err := setUint(slice.Index(i), raw[i+2], 16)
+			if err != nil {
+				return reflect.Value{}, fmt.Errorf("parse uint16: %s, %w", raw[i+2], err)
+			}
+		case reflect.Uint32:
+			err := setUint(slice.Index(i), raw[i+2], 32)
+			if err != nil {
+				return reflect.Value{}, fmt.Errorf("parse uint32: %s, %w", raw[i+2], err)
+			}
+		case reflect.Uint64:
+			err := setUint(slice.Index(i), raw[i+2], 64)
+			if err != nil {
+				return reflect.Value{}, fmt.Errorf("parse uint64: %s, %w", raw[i+2], err)
+			}
+		case reflect.Float32:
+			err := setFloat(slice.Index(i), raw[i+2], 32)
+			if err != nil {
+				return reflect.Value{}, fmt.Errorf("parse float32: %s, %w", raw[i+2], err)
+			}
+		case reflect.Float64:
+			err := setFloat(slice.Index(i), raw[i+2], 64)
+			if err != nil {
+				return reflect.Value{}, fmt.Errorf("parse float64: %s, %w", raw[i+2], err)
+			}
+		case reflect.String:
+			slice.Index(i).SetString(raw[i+2])
+		default:
+			return reflect.Value{}, fmt.Errorf("unsupported kind: %d", kind)
+		}
+	}
+
+	return slice, nil
+}
+
+func createRawSliceType(kind reflect.Kind) (reflect.Type, error) {
+	var sliceType reflect.Type
+	switch kind {
+	case reflect.Bool:
+		sliceType = reflect.TypeOf([]bool{})
+	case reflect.Int:
+		sliceType = reflect.TypeOf([]int{})
+	case reflect.Int8:
+		sliceType = reflect.TypeOf([]int8{})
+	case reflect.Int16:
+		sliceType = reflect.TypeOf([]int16{})
+	case reflect.Int32:
+		sliceType = reflect.TypeOf([]int32{})
+	case reflect.Int64:
+		sliceType = reflect.TypeOf([]int64{})
+	case reflect.Uint:
+		sliceType = reflect.TypeOf([]uint{})
+	case reflect.Uint8:
+		sliceType = reflect.TypeOf([]uint8{})
+	case reflect.Uint16:
+		sliceType = reflect.TypeOf([]uint16{})
+	case reflect.Uint32:
+		sliceType = reflect.TypeOf([]uint32{})
+	case reflect.Uint64:
+		sliceType = reflect.TypeOf([]uint64{})
+	case reflect.Float32:
+		sliceType = reflect.TypeOf([]float32{})
+	case reflect.Float64:
+		sliceType = reflect.TypeOf([]float64{})
+	case reflect.String:
+		sliceType = reflect.TypeOf([]string{})
+	default:
+		return nil, fmt.Errorf("unsupported kind: %d", kind)
+	}
+
+	return sliceType, nil
 }

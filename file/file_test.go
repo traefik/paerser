@@ -68,6 +68,41 @@ fii = "bir"
 	assert.Equal(t, expected, element)
 }
 
+func TestDecodeContent_TOML_rawSlice(t *testing.T) {
+	content := `
+[testData]
+trustIP = [
+  "10.0.0.0/8",
+  "172.0.0.0/8",
+  "192.0.0.0/8"
+]
+koo = [1, 2, 3]
+soo = [1, "a", 3]
+boo = [1, 2.6, 3]
+buckets = [42.01, 42.02]
+
+  [testData.Headers]
+  Foo = "Bar"
+`
+
+	var element FooRaw
+
+	err := DecodeContent(content, ".toml", &element)
+	require.NoError(t, err)
+
+	expected := FooRaw{
+		TestData: map[string]interface{}{
+			"Headers": map[string]interface{}{"Foo": "Bar"},
+			"trustIP": []string{"10.0.0.0/8", "172.0.0.0/8", "192.0.0.0/8"},
+			"koo":     []int64{1, 2, 3},
+			"soo":     []string{"1", "a", "3"},
+			"boo":     []float64{1, 2.6, 3},
+			"buckets": []float64{42.01, 42.02},
+		},
+	}
+	assert.Equal(t, expected, element)
+}
+
 func TestDecodeContent_TOML_rawValue(t *testing.T) {
 	content := `
 name = "test"
@@ -147,6 +182,49 @@ yi: {}
 		Yi: &Yi{
 			Foo: "foo",
 			Fii: "fii",
+		},
+	}
+	assert.Equal(t, expected, element)
+}
+
+func TestDecodeContent_YAML_rawSlice(t *testing.T) {
+	content := `
+testData:
+  Headers:
+    Foo: Bar
+  trustIP:
+    - 10.0.0.0/8
+    - 172.0.0.0/8
+    - 192.0.0.0/8
+  koo:
+    - 1
+    - 2
+    - 3
+  soo:
+    - 1
+    - a
+    - 3
+  boo:
+    - 1
+    - 2.6
+    - 3
+  buckets:
+    - 42.01
+    - 42.02
+`
+
+	var element FooRaw
+	err := DecodeContent(content, ".yaml", &element)
+	require.NoError(t, err)
+
+	expected := FooRaw{
+		TestData: map[string]interface{}{
+			"Headers": map[string]interface{}{"Foo": "Bar"},
+			"trustIP": []string{"10.0.0.0/8", "172.0.0.0/8", "192.0.0.0/8"},
+			"koo":     []int{1, 2, 3},
+			"soo":     []string{"1", "a", "3"},
+			"boo":     []float64{1, 2.6, 3},
+			"buckets": []float64{42.01, 42.02},
 		},
 	}
 	assert.Equal(t, expected, element)

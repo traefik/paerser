@@ -116,7 +116,7 @@
 
 [metrics]
   [metrics.prometheus]
-    buckets = [42.0, 42.0]
+    buckets = [42.01, 42.02]
     entryPoint = "foobar"
     middlewares = ["foobar", "foobar"]
   [metrics.datadog]

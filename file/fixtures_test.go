@@ -32,3 +32,7 @@ type Yu struct {
 type Ye struct {
 	*Yi
 }
+
+type FooRaw struct {
+	TestData map[string]interface{}
+}

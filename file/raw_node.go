@@ -56,9 +56,26 @@ func decodeRaw(node *parser.Node, vData reflect.Value, filters ...string) error 
 			child.Value = value
 		case reflect.Slice:
 			var values []string
+			var kind reflect.Kind
 
 			for i := 0; i < value.Len(); i++ {
 				item := value.Index(i)
+
+				// Try to guess the kind of the slice.
+				// TODO(ldez): it's related to raw map. Rethink the node parser.
+				switch item.Kind() {
+				case reflect.Interface:
+					if kind < item.Elem().Kind() {
+						kind = item.Elem().Kind()
+					}
+				case reflect.Map:
+				// noop
+				default:
+					if kind < item.Kind() {
+						kind = item.Kind()
+					}
+				}
+
 				switch item.Kind() {
 				case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 					fallthrough
@@ -94,7 +111,11 @@ func decodeRaw(node *parser.Node, vData reflect.Value, filters ...string) error 
 				}
 			}
 
-			child.Value = strings.Join(values, defaultRawSliceSeparator)
+			// TODO(ldez): the kind is related to raw map. Rethink the node parser.
+			child.Value = ""
+			if len(values) > 0 {
+				child.Value = fmt.Sprintf("%[1]s%[2]d%[1]s%[3]s", defaultRawSliceSeparator, kind, strings.Join(values, defaultRawSliceSeparator))
+			}
 		case reflect.Map:
 			err := decodeRaw(child, value)
 			if err != nil {

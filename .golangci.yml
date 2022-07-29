@@ -1,5 +1,5 @@
 run:
-  deadline: 2m
+  timeout: 2m
   skip-files:
     - ^unsecured/
 
@@ -24,6 +24,9 @@ linters-settings:
     min-complexity: 65 # default 30
   gofumpt:
     extra-rules: true
+  godox:
+    keywords:
+      - FIXME
 
 linters:
   enable-all: true
@@ -50,6 +53,7 @@ linters:
     - ifshort
     - forcetypeassert
     - varnamelen
+    - nosnakecase
 
 issues:
   exclude-use-default: false
