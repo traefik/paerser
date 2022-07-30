@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	"math"
 	"reflect"
 	"strconv"
 	"strings"
@@ -439,52 +440,24 @@ func (f filler) fillRawTypedSlice(s string) (reflect.Value, error) {
 				return reflect.Value{}, fmt.Errorf("parse int: %s, %w", raw[i+2], err)
 			}
 			slice.Index(i).Set(reflect.ValueOf(val))
-		case reflect.Int8:
-			err := setInt(slice.Index(i), raw[i+2], 8)
+		case reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			val, err := strconv.ParseInt(raw[i+2], 10, int(math.Pow(2, float64(kind-reflect.Int+2))))
 			if err != nil {
-				return reflect.Value{}, fmt.Errorf("parse int8: %s, %w", raw[i+2], err)
+				return reflect.Value{}, fmt.Errorf("parse %s: %s, %w", kind, raw[i+2], err)
 			}
-		case reflect.Int16:
-			err := setInt(slice.Index(i), raw[i+2], 16)
-			if err != nil {
-				return reflect.Value{}, fmt.Errorf("parse int16: %s, %w", raw[i+2], err)
-			}
-		case reflect.Int32:
-			err := setInt(slice.Index(i), raw[i+2], 32)
-			if err != nil {
-				return reflect.Value{}, fmt.Errorf("parse int32: %s, %w", raw[i+2], err)
-			}
-		case reflect.Int64:
-			err := setInt(slice.Index(i), raw[i+2], 64)
-			if err != nil {
-				return reflect.Value{}, fmt.Errorf("parse int64: %s, %w", raw[i+2], err)
-			}
+			slice.Index(i).Set(reflect.ValueOf(val))
 		case reflect.Uint:
 			val, err := strconv.ParseUint(raw[i+2], 10, 64)
 			if err != nil {
 				return reflect.Value{}, fmt.Errorf("parse uint: %s, %w", raw[i+2], err)
 			}
 			slice.Index(i).Set(reflect.ValueOf(val))
-		case reflect.Uint8:
-			err := setUint(slice.Index(i), raw[i+2], 8)
+		case reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			val, err := strconv.ParseUint(raw[i+2], 10, int(math.Pow(2, float64(kind-reflect.Uint+2))))
 			if err != nil {
-				return reflect.Value{}, fmt.Errorf("parse uint8: %s, %w", raw[i+2], err)
+				return reflect.Value{}, fmt.Errorf("parse uint: %s, %w", raw[i+2], err)
 			}
-		case reflect.Uint16:
-			err := setUint(slice.Index(i), raw[i+2], 16)
-			if err != nil {
-				return reflect.Value{}, fmt.Errorf("parse uint16: %s, %w", raw[i+2], err)
-			}
-		case reflect.Uint32:
-			err := setUint(slice.Index(i), raw[i+2], 32)
-			if err != nil {
-				return reflect.Value{}, fmt.Errorf("parse uint32: %s, %w", raw[i+2], err)
-			}
-		case reflect.Uint64:
-			err := setUint(slice.Index(i), raw[i+2], 64)
-			if err != nil {
-				return reflect.Value{}, fmt.Errorf("parse uint64: %s, %w", raw[i+2], err)
-			}
+			slice.Index(i).Set(reflect.ValueOf(val))
 		case reflect.Float32:
 			err := setFloat(slice.Index(i), raw[i+2], 32)
 			if err != nil {
