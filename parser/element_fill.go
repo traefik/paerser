@@ -432,13 +432,13 @@ func (f filler) fillRawTypedSlice(s string) (reflect.Value, error) {
 			if err != nil {
 				return reflect.Value{}, fmt.Errorf("parse bool: %s, %w", raw[i+2], err)
 			}
-			slice.Index(i).Set(reflect.ValueOf(val).Convert(reflect.TypeOf(true)))
+			slice.Index(i).Set(reflect.ValueOf(val))
 		case reflect.Int:
 			val, err := strconv.ParseInt(raw[i+2], 10, 64)
 			if err != nil {
 				return reflect.Value{}, fmt.Errorf("parse int: %s, %w", raw[i+2], err)
 			}
-			slice.Index(i).Set(reflect.ValueOf(val).Convert(reflect.TypeOf(0)))
+			slice.Index(i).Set(reflect.ValueOf(val))
 		case reflect.Int8:
 			err := setInt(slice.Index(i), raw[i+2], 8)
 			if err != nil {
@@ -464,7 +464,7 @@ func (f filler) fillRawTypedSlice(s string) (reflect.Value, error) {
 			if err != nil {
 				return reflect.Value{}, fmt.Errorf("parse uint: %s, %w", raw[i+2], err)
 			}
-			slice.Index(i).Set(reflect.ValueOf(val).Convert(reflect.TypeOf(uint(0))))
+			slice.Index(i).Set(reflect.ValueOf(val))
 		case reflect.Uint8:
 			err := setUint(slice.Index(i), raw[i+2], 8)
 			if err != nil {
@@ -496,7 +496,7 @@ func (f filler) fillRawTypedSlice(s string) (reflect.Value, error) {
 				return reflect.Value{}, fmt.Errorf("parse float64: %s, %w", raw[i+2], err)
 			}
 		case reflect.String:
-			slice.Index(i).Set(reflect.ValueOf(raw[i+2]).Convert(reflect.TypeOf("")))
+			slice.Index(i).Set(reflect.ValueOf(raw[i+2]))
 		default:
 			return reflect.Value{}, fmt.Errorf("unsupported kind: %d", kind)
 		}
