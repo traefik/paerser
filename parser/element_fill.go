@@ -423,12 +423,7 @@ func (f filler) fillRawTypedSlice(s string) (reflect.Value, error) {
 
 	kind := reflect.Kind(rawType)
 
-	sliceType, err := createRawSliceType(kind)
-	if err != nil {
-		return reflect.Value{}, err
-	}
-
-	slice := reflect.MakeSlice(sliceType, len(raw[2:]), len(raw[2:]))
+	slice := reflect.MakeSlice(reflect.TypeOf([]interface{}{}), len(raw[2:]), len(raw[2:]))
 
 	for i := 0; i < len(raw[2:]); i++ {
 		switch kind {
@@ -437,13 +432,13 @@ func (f filler) fillRawTypedSlice(s string) (reflect.Value, error) {
 			if err != nil {
 				return reflect.Value{}, fmt.Errorf("parse bool: %s, %w", raw[i+2], err)
 			}
-			slice.Index(i).SetBool(val)
+			slice.Index(i).Set(reflect.ValueOf(val).Convert(reflect.TypeOf(true)))
 		case reflect.Int:
 			val, err := strconv.ParseInt(raw[i+2], 10, 64)
 			if err != nil {
 				return reflect.Value{}, fmt.Errorf("parse int: %s, %w", raw[i+2], err)
 			}
-			slice.Index(i).SetInt(val)
+			slice.Index(i).Set(reflect.ValueOf(val).Convert(reflect.TypeOf(0)))
 		case reflect.Int8:
 			err := setInt(slice.Index(i), raw[i+2], 8)
 			if err != nil {
@@ -469,7 +464,7 @@ func (f filler) fillRawTypedSlice(s string) (reflect.Value, error) {
 			if err != nil {
 				return reflect.Value{}, fmt.Errorf("parse uint: %s, %w", raw[i+2], err)
 			}
-			slice.Index(i).SetUint(val)
+			slice.Index(i).Set(reflect.ValueOf(val).Convert(reflect.TypeOf(uint(0))))
 		case reflect.Uint8:
 			err := setUint(slice.Index(i), raw[i+2], 8)
 			if err != nil {
@@ -501,49 +496,11 @@ func (f filler) fillRawTypedSlice(s string) (reflect.Value, error) {
 				return reflect.Value{}, fmt.Errorf("parse float64: %s, %w", raw[i+2], err)
 			}
 		case reflect.String:
-			slice.Index(i).SetString(raw[i+2])
+			slice.Index(i).Set(reflect.ValueOf(raw[i+2]).Convert(reflect.TypeOf("")))
 		default:
 			return reflect.Value{}, fmt.Errorf("unsupported kind: %d", kind)
 		}
 	}
 
 	return slice, nil
-}
-
-func createRawSliceType(kind reflect.Kind) (reflect.Type, error) {
-	var sliceType reflect.Type
-	switch kind {
-	case reflect.Bool:
-		sliceType = reflect.TypeOf([]bool{})
-	case reflect.Int:
-		sliceType = reflect.TypeOf([]int{})
-	case reflect.Int8:
-		sliceType = reflect.TypeOf([]int8{})
-	case reflect.Int16:
-		sliceType = reflect.TypeOf([]int16{})
-	case reflect.Int32:
-		sliceType = reflect.TypeOf([]int32{})
-	case reflect.Int64:
-		sliceType = reflect.TypeOf([]int64{})
-	case reflect.Uint:
-		sliceType = reflect.TypeOf([]uint{})
-	case reflect.Uint8:
-		sliceType = reflect.TypeOf([]uint8{})
-	case reflect.Uint16:
-		sliceType = reflect.TypeOf([]uint16{})
-	case reflect.Uint32:
-		sliceType = reflect.TypeOf([]uint32{})
-	case reflect.Uint64:
-		sliceType = reflect.TypeOf([]uint64{})
-	case reflect.Float32:
-		sliceType = reflect.TypeOf([]float32{})
-	case reflect.Float64:
-		sliceType = reflect.TypeOf([]float64{})
-	case reflect.String:
-		sliceType = reflect.TypeOf([]string{})
-	default:
-		return nil, fmt.Errorf("unsupported kind: %d", kind)
-	}
-
-	return sliceType, nil
 }

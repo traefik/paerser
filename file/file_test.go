@@ -79,6 +79,7 @@ trustIP = [
 koo = [1, 2, 3]
 soo = [1, "a", 3]
 boo = [1, 2.6, 3]
+hoo = [true, false, false, true]
 buckets = [42.01, 42.02]
 
   [testData.Headers]
@@ -93,14 +94,15 @@ buckets = [42.01, 42.02]
 	expected := FooRaw{
 		TestData: map[string]interface{}{
 			"Headers": map[string]interface{}{"Foo": "Bar"},
-			"trustIP": []string{"10.0.0.0/8", "172.0.0.0/8", "192.0.0.0/8"},
-			"koo":     []int64{1, 2, 3},
-			"soo":     []string{"1", "a", "3"},
-			"boo":     []float64{1, 2.6, 3},
-			"buckets": []float64{42.01, 42.02},
+			"trustIP": []interface{}{"10.0.0.0/8", "172.0.0.0/8", "192.0.0.0/8"},
+			"koo":     []interface{}{int64(1), int64(2), int64(3)},
+			"soo":     []interface{}{"1", "a", "3"},
+			"boo":     []interface{}{float64(1), 2.6, float64(3)},
+			"hoo":     []interface{}{true, false, false, true},
+			"buckets": []interface{}{42.01, 42.02},
 		},
 	}
-	assert.Equal(t, expected, element)
+	assert.EqualValues(t, expected, element)
 }
 
 func TestDecodeContent_TOML_rawValue(t *testing.T) {
@@ -211,6 +213,11 @@ testData:
   buckets:
     - 42.01
     - 42.02
+  hoo:
+    - true
+    - false
+    - false
+    - true
 `
 
 	var element FooRaw
@@ -220,11 +227,12 @@ testData:
 	expected := FooRaw{
 		TestData: map[string]interface{}{
 			"Headers": map[string]interface{}{"Foo": "Bar"},
-			"trustIP": []string{"10.0.0.0/8", "172.0.0.0/8", "192.0.0.0/8"},
-			"koo":     []int{1, 2, 3},
-			"soo":     []string{"1", "a", "3"},
-			"boo":     []float64{1, 2.6, 3},
-			"buckets": []float64{42.01, 42.02},
+			"trustIP": []interface{}{"10.0.0.0/8", "172.0.0.0/8", "192.0.0.0/8"},
+			"koo":     []interface{}{1, 2, 3},
+			"soo":     []interface{}{"1", "a", "3"},
+			"boo":     []interface{}{float64(1), 2.6, float64(3)},
+			"hoo":     []interface{}{true, false, false, true},
+			"buckets": []interface{}{42.01, 42.02},
 		},
 	}
 	assert.Equal(t, expected, element)
