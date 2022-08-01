@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	"math"
 	"reflect"
 	"strconv"
 	"strings"
@@ -151,6 +152,10 @@ func (f filler) setSlice(field reflect.Value, node *Node) error {
 	}
 
 	values := strings.Split(node.Value, f.RawSliceSeparator)
+	if f.RawSliceSeparator != defaultRawSliceSeparator {
+		// TODO(ldez): this is related to raw map and file. Rethink the node parser.
+		values = values[2:]
+	}
 
 	slice := reflect.MakeSlice(field.Type(), len(values), len(values))
 	field.Set(slice)
@@ -282,10 +287,16 @@ func (f filler) setMap(field reflect.Value, node *Node) error {
 	}
 
 	if field.Type().Elem().Kind() == reflect.Interface {
-		fillRawValue(field, node, false)
+		err := f.fillRawValue(field, node, false)
+		if err != nil {
+			return err
+		}
 
 		for _, child := range node.Children {
-			fillRawValue(field, child, true)
+			err = f.fillRawValue(field, child, true)
+			if err != nil {
+				return err
+			}
 		}
 
 		return nil
@@ -361,22 +372,108 @@ func setFloat(field reflect.Value, value string, bitSize int) error {
 	return nil
 }
 
-func fillRawValue(field reflect.Value, node *Node, subMap bool) {
+func (f filler) fillRawValue(field reflect.Value, node *Node, subMap bool) error {
 	m, ok := node.RawValue.(map[string]interface{})
 	if !ok {
-		return
+		return nil
 	}
 
 	if _, self := m[node.Name]; self || !subMap {
 		for k, v := range m {
-			field.SetMapIndex(reflect.ValueOf(k), reflect.ValueOf(v))
+			if f.RawSliceSeparator == defaultRawSliceSeparator {
+				field.SetMapIndex(reflect.ValueOf(k), reflect.ValueOf(v))
+				continue
+			}
+
+			// TODO(ldez): all the next section is related to raw map and file. Rethink the node parser.
+
+			s, ok := v.(string)
+			if !ok || len(s) == 0 || !strings.HasPrefix(s, f.RawSliceSeparator) {
+				field.SetMapIndex(reflect.ValueOf(k), reflect.ValueOf(v))
+				continue
+			}
+
+			// typed slice
+
+			value, err := f.fillRawTypedSlice(s)
+			if err != nil {
+				return err
+			}
+
+			field.SetMapIndex(reflect.ValueOf(k), value)
 		}
 
-		return
+		return nil
 	}
 
 	p := map[string]interface{}{node.Name: m}
 	node.RawValue = p
 
 	field.SetMapIndex(reflect.ValueOf(node.Name), reflect.ValueOf(p[node.Name]))
+
+	return nil
+}
+
+func (f filler) fillRawTypedSlice(s string) (reflect.Value, error) {
+	raw := strings.Split(s, f.RawSliceSeparator)
+
+	rawType, err := strconv.Atoi(raw[1])
+	if err != nil {
+		return reflect.Value{}, err
+	}
+
+	kind := reflect.Kind(rawType)
+
+	slice := reflect.MakeSlice(reflect.TypeOf([]interface{}{}), len(raw[2:]), len(raw[2:]))
+
+	for i := 0; i < len(raw[2:]); i++ {
+		switch kind {
+		case reflect.Bool:
+			val, err := strconv.ParseBool(raw[i+2])
+			if err != nil {
+				return reflect.Value{}, fmt.Errorf("parse bool: %s, %w", raw[i+2], err)
+			}
+			slice.Index(i).Set(reflect.ValueOf(val))
+		case reflect.Int:
+			val, err := strconv.ParseInt(raw[i+2], 10, 64)
+			if err != nil {
+				return reflect.Value{}, fmt.Errorf("parse int: %s, %w", raw[i+2], err)
+			}
+			slice.Index(i).Set(reflect.ValueOf(val))
+		case reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			val, err := strconv.ParseInt(raw[i+2], 10, int(math.Pow(2, float64(kind-reflect.Int+2))))
+			if err != nil {
+				return reflect.Value{}, fmt.Errorf("parse %s: %s, %w", kind, raw[i+2], err)
+			}
+			slice.Index(i).Set(reflect.ValueOf(val))
+		case reflect.Uint:
+			val, err := strconv.ParseUint(raw[i+2], 10, 64)
+			if err != nil {
+				return reflect.Value{}, fmt.Errorf("parse uint: %s, %w", raw[i+2], err)
+			}
+			slice.Index(i).Set(reflect.ValueOf(val))
+		case reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			val, err := strconv.ParseUint(raw[i+2], 10, int(math.Pow(2, float64(kind-reflect.Uint+2))))
+			if err != nil {
+				return reflect.Value{}, fmt.Errorf("parse uint: %s, %w", raw[i+2], err)
+			}
+			slice.Index(i).Set(reflect.ValueOf(val))
+		case reflect.Float32:
+			err := setFloat(slice.Index(i), raw[i+2], 32)
+			if err != nil {
+				return reflect.Value{}, fmt.Errorf("parse float32: %s, %w", raw[i+2], err)
+			}
+		case reflect.Float64:
+			err := setFloat(slice.Index(i), raw[i+2], 64)
+			if err != nil {
+				return reflect.Value{}, fmt.Errorf("parse float64: %s, %w", raw[i+2], err)
+			}
+		case reflect.String:
+			slice.Index(i).Set(reflect.ValueOf(raw[i+2]))
+		default:
+			return reflect.Value{}, fmt.Errorf("unsupported kind: %d", kind)
+		}
+	}
+
+	return slice, nil
 }

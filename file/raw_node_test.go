@@ -209,7 +209,7 @@ func Test_decodeRawToNode(t *testing.T) {
 			expected: &parser.Node{
 				Name: "traefik",
 				Children: []*parser.Node{
-					{Name: "foo", Value: "A║B"},
+					{Name: "foo", Value: "║24║A║B"},
 				},
 			},
 		},
@@ -221,7 +221,7 @@ func Test_decodeRawToNode(t *testing.T) {
 			expected: &parser.Node{
 				Name: "traefik",
 				Children: []*parser.Node{
-					{Name: "foo", Value: "1║2"},
+					{Name: "foo", Value: "║2║1║2"},
 				},
 			},
 		},
@@ -233,7 +233,7 @@ func Test_decodeRawToNode(t *testing.T) {
 			expected: &parser.Node{
 				Name: "traefik",
 				Children: []*parser.Node{
-					{Name: "foo", Value: "1║2"},
+					{Name: "foo", Value: "║3║1║2"},
 				},
 			},
 		},
@@ -245,7 +245,7 @@ func Test_decodeRawToNode(t *testing.T) {
 			expected: &parser.Node{
 				Name: "traefik",
 				Children: []*parser.Node{
-					{Name: "foo", Value: "1║2"},
+					{Name: "foo", Value: "║4║1║2"},
 				},
 			},
 		},
@@ -257,7 +257,7 @@ func Test_decodeRawToNode(t *testing.T) {
 			expected: &parser.Node{
 				Name: "traefik",
 				Children: []*parser.Node{
-					{Name: "foo", Value: "1║2"},
+					{Name: "foo", Value: "║5║1║2"},
 				},
 			},
 		},
@@ -269,7 +269,7 @@ func Test_decodeRawToNode(t *testing.T) {
 			expected: &parser.Node{
 				Name: "traefik",
 				Children: []*parser.Node{
-					{Name: "foo", Value: "1║2"},
+					{Name: "foo", Value: "║6║1║2"},
 				},
 			},
 		},
@@ -281,7 +281,7 @@ func Test_decodeRawToNode(t *testing.T) {
 			expected: &parser.Node{
 				Name: "traefik",
 				Children: []*parser.Node{
-					{Name: "foo", Value: "true║false"},
+					{Name: "foo", Value: "║1║true║false"},
 				},
 			},
 		},
@@ -293,7 +293,7 @@ func Test_decodeRawToNode(t *testing.T) {
 			expected: &parser.Node{
 				Name: "traefik",
 				Children: []*parser.Node{
-					{Name: "foo", Value: "A║B"},
+					{Name: "foo", Value: "║24║A║B"},
 				},
 			},
 		},
@@ -305,7 +305,7 @@ func Test_decodeRawToNode(t *testing.T) {
 			expected: &parser.Node{
 				Name: "traefik",
 				Children: []*parser.Node{
-					{Name: "foo", Value: "1║2"},
+					{Name: "foo", Value: "║2║1║2"},
 				},
 			},
 		},
