@@ -154,7 +154,7 @@ func (f filler) setSlice(field reflect.Value, node *Node) error {
 	values := strings.Split(node.Value, f.RawSliceSeparator)
 	if f.RawSliceSeparator != defaultRawSliceSeparator {
 		if len(values) < 2 {
-			return fmt.Errorf("invalid configuration: the value must a list instead of a string: %q", strings.Join(values, ","))
+			return fmt.Errorf("invalid configuration: the value must be a list instead of a string: %q", strings.Join(values, ","))
 		}
 
 		// TODO(ldez): this is related to raw map and file. Rethink the node parser.
