@@ -398,7 +398,14 @@ func (f filler) fillRawValue(field reflect.Value, node *Node, subMap bool) error
 
 			s, ok := v.(string)
 			if !ok || len(s) == 0 || !strings.HasPrefix(s, f.RawSliceSeparator) {
-				field.SetMapIndex(reflect.ValueOf(k), reflect.ValueOf(v))
+				fmt.Printf("%#v\n", v)
+
+				rawValue, err := f.cleanRawValue(reflect.ValueOf(v))
+				if err != nil {
+					return err
+				}
+
+				field.SetMapIndex(reflect.ValueOf(k), rawValue)
 				continue
 			}
 
@@ -485,4 +492,55 @@ func (f filler) fillRawTypedSlice(s string) (reflect.Value, error) {
 	}
 
 	return slice, nil
+}
+
+func (f filler) cleanRawValue(value reflect.Value) (reflect.Value, error) {
+	switch value.Kind() {
+	case reflect.Ptr:
+		rawValue, err := f.cleanRawValue(value.Elem())
+		if err != nil {
+			return reflect.Value{}, err
+		}
+
+		value.Elem().Set(rawValue)
+
+	case reflect.Map:
+		keys := value.MapKeys()
+		for _, key := range keys {
+			v := value.MapIndex(key)
+
+			rawValue, err := f.cleanRawValue(v)
+			if err != nil {
+				return reflect.Value{}, err
+			}
+
+			value.SetMapIndex(key, rawValue)
+		}
+
+	case reflect.Slice:
+		if value.IsZero() {
+			return value, nil
+		}
+
+		for i := 0; i < value.Len(); i++ {
+			if !value.Index(i).IsZero() {
+				rawValue, err := f.cleanRawValue(value.Index(i))
+				if err != nil {
+					return reflect.Value{}, err
+				}
+
+				value.Index(i).Set(rawValue)
+			}
+		}
+
+	case reflect.Interface:
+		return f.cleanRawValue(value.Elem())
+
+	case reflect.String:
+		if strings.HasPrefix(value.String(), f.RawSliceSeparator) {
+			return f.fillRawTypedSlice(value.String())
+		}
+	}
+
+	return value, nil
 }
