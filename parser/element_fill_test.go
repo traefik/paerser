@@ -17,10 +17,11 @@ func TestFill(t *testing.T) {
 	}
 
 	testCases := []struct {
-		desc     string
-		node     *Node
-		element  interface{}
-		expected expected
+		desc              string
+		rawSliceSeparator string
+		node              *Node
+		element           interface{}
+		expected          expected
 	}{
 		{
 			desc:     "empty node",
@@ -1516,6 +1517,45 @@ func TestFill(t *testing.T) {
 				},
 			}},
 		},
+		{
+			desc:              "raw value of slice of map",
+			rawSliceSeparator: ".",
+			node: &Node{
+				Name: "traefik",
+				Kind: reflect.Ptr,
+				Children: []*Node{{
+					Name:      "meta",
+					FieldName: "Meta",
+					RawValue: map[string]interface{}{
+						"bar": []interface{}{
+							map[string]interface{}{
+								"name":  "a",
+								"value": "1",
+							},
+							map[string]interface{}{
+								"name":  "b",
+								"value": "2",
+							},
+						},
+					},
+					Disabled: false,
+					Kind:     reflect.Map,
+				}},
+			},
+			element: &struct {
+				Meta map[string]interface{}
+			}{},
+			expected: expected{element: &struct {
+				Meta map[string]interface{}
+			}{
+				Meta: map[string]interface{}{
+					"bar": []interface{}{
+						map[string]interface{}{"name": "a", "value": "1"},
+						map[string]interface{}{"name": "b", "value": "2"},
+					},
+				},
+			}},
+		},
 	}
 
 	for _, test := range testCases {
@@ -1523,7 +1563,7 @@ func TestFill(t *testing.T) {
 		t.Run(test.desc, func(t *testing.T) {
 			t.Parallel()
 
-			err := newFiller(FillerOpts{AllowSliceAsStruct: true}).Fill(test.element, test.node)
+			err := newFiller(FillerOpts{AllowSliceAsStruct: true, RawSliceSeparator: test.rawSliceSeparator}).Fill(test.element, test.node)
 			if test.expected.error {
 				require.Error(t, err)
 			} else {

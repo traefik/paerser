@@ -218,6 +218,11 @@ testData:
     - false
     - false
     - true
+  joo:
+    - name: a
+      value: 1
+    - name: c
+      value: 2
 `
 
 	var element FooRaw
@@ -233,6 +238,10 @@ testData:
 			"boo":     []interface{}{float64(1), 2.6, float64(3)},
 			"hoo":     []interface{}{true, false, false, true},
 			"buckets": []interface{}{42.01, 42.02},
+			"joo": []interface{}{
+				map[string]interface{}{"name": "a", "value": "1"},
+				map[string]interface{}{"name": "c", "value": "2"},
+			},
 		},
 	}
 	assert.Equal(t, expected, element)
