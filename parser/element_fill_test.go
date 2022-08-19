@@ -1523,24 +1523,25 @@ func TestFill(t *testing.T) {
 			node: &Node{
 				Name: "traefik",
 				Kind: reflect.Ptr,
-				Children: []*Node{{
-					Name:      "meta",
-					FieldName: "Meta",
-					RawValue: map[string]interface{}{
-						"bar": []interface{}{
-							map[string]interface{}{
-								"name":  "a",
-								"value": "1",
-							},
-							map[string]interface{}{
-								"name":  "b",
-								"value": "2",
+				Children: []*Node{
+					{
+						Name:      "meta",
+						FieldName: "Meta",
+						RawValue: map[string]interface{}{
+							"bar": []interface{}{
+								map[string]interface{}{
+									"name":  "a",
+									"value": "1",
+								},
+								map[string]interface{}{
+									"name":  "b",
+									"value": "2",
+								},
 							},
 						},
+						Disabled: false,
+						Kind:     reflect.Map,
 					},
-					Disabled: false,
-					Kind:     reflect.Map,
-				},
 				},
 			},
 			element: &struct {
