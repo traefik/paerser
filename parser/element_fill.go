@@ -398,8 +398,6 @@ func (f filler) fillRawValue(field reflect.Value, node *Node, subMap bool) error
 
 			s, ok := v.(string)
 			if !ok || len(s) == 0 || !strings.HasPrefix(s, f.RawSliceSeparator) {
-				fmt.Printf("%#v\n", v)
-
 				rawValue, err := f.cleanRawValue(reflect.ValueOf(v))
 				if err != nil {
 					return err
