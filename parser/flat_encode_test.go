@@ -28,7 +28,7 @@ func TestEncodeToFlat(t *testing.T) {
 			node: &Node{
 				Name:      "traefik",
 				FieldName: "",
-				Kind:      reflect.Ptr,
+				Kind:      reflect.Pointer,
 				Children: []*Node{
 					{
 						Name:        "Field",
@@ -56,7 +56,7 @@ func TestEncodeToFlat(t *testing.T) {
 			node: &Node{
 				Name:      "traefik",
 				FieldName: "",
-				Kind:      reflect.Ptr,
+				Kind:      reflect.Pointer,
 				Children: []*Node{
 					{
 						Name:        "Field",
@@ -84,7 +84,7 @@ func TestEncodeToFlat(t *testing.T) {
 			node: &Node{
 				Name:      "traefik",
 				FieldName: "",
-				Kind:      reflect.Ptr,
+				Kind:      reflect.Pointer,
 				Children: []*Node{
 					{
 						Name:        "Field",
@@ -112,14 +112,14 @@ func TestEncodeToFlat(t *testing.T) {
 			node: &Node{
 				Name:      "traefik",
 				FieldName: "",
-				Kind:      reflect.Ptr,
+				Kind:      reflect.Pointer,
 				Children: []*Node{
 					{
 						Name:        "Field",
 						Description: "field description",
 						FieldName:   "Field",
 						Value:       "test",
-						Kind:        reflect.Ptr,
+						Kind:        reflect.Pointer,
 						Tag:         `description:"field description"`,
 					},
 				},
@@ -140,14 +140,14 @@ func TestEncodeToFlat(t *testing.T) {
 			node: &Node{
 				Name:      "traefik",
 				FieldName: "",
-				Kind:      reflect.Ptr,
+				Kind:      reflect.Pointer,
 				Children: []*Node{
 					{
 						Name:        "Field",
 						Description: "field description",
 						FieldName:   "Field",
 						Value:       "test",
-						Kind:        reflect.Ptr,
+						Kind:        reflect.Pointer,
 						Tag:         `description:"field description"`,
 					},
 				},
@@ -174,14 +174,14 @@ func TestEncodeToFlat(t *testing.T) {
 			node: &Node{
 				Name:      "traefik",
 				FieldName: "",
-				Kind:      reflect.Ptr,
+				Kind:      reflect.Pointer,
 				Children: []*Node{
 					{
 						Name:        "Field",
 						Description: "field description",
 						FieldName:   "Field",
 						Value:       "6",
-						Kind:        reflect.Ptr,
+						Kind:        reflect.Pointer,
 						Tag:         `description:"field description"`,
 					},
 				},
@@ -202,14 +202,14 @@ func TestEncodeToFlat(t *testing.T) {
 			node: &Node{
 				Name:      "traefik",
 				FieldName: "",
-				Kind:      reflect.Ptr,
+				Kind:      reflect.Pointer,
 				Children: []*Node{
 					{
 						Name:        "Field",
 						Description: "field description",
 						FieldName:   "Field",
 						Value:       "true",
-						Kind:        reflect.Ptr,
+						Kind:        reflect.Pointer,
 						Tag:         `description:"field description"`,
 					},
 				},
@@ -228,7 +228,7 @@ func TestEncodeToFlat(t *testing.T) {
 			node: &Node{
 				Name:      "traefik",
 				FieldName: "",
-				Kind:      reflect.Ptr,
+				Kind:      reflect.Pointer,
 				Children: []*Node{
 					{
 						Name:        "Field",
@@ -255,7 +255,7 @@ func TestEncodeToFlat(t *testing.T) {
 			node: &Node{
 				Name:      "traefik",
 				FieldName: "",
-				Kind:      reflect.Ptr,
+				Kind:      reflect.Pointer,
 				Children: []*Node{
 					{
 						Name:        "Field",
@@ -281,7 +281,7 @@ func TestEncodeToFlat(t *testing.T) {
 			node: &Node{
 				Name:      "traefik",
 				FieldName: "",
-				Kind:      reflect.Ptr,
+				Kind:      reflect.Pointer,
 				Children: []*Node{
 					{
 						Name:        "Field",
@@ -308,7 +308,7 @@ func TestEncodeToFlat(t *testing.T) {
 			node: &Node{
 				Name:      "traefik",
 				FieldName: "",
-				Kind:      reflect.Ptr,
+				Kind:      reflect.Pointer,
 				Children: []*Node{
 					{
 						Name:        "Field",
@@ -338,7 +338,7 @@ func TestEncodeToFlat(t *testing.T) {
 			node: &Node{
 				Name:      "traefik",
 				FieldName: "",
-				Kind:      reflect.Ptr,
+				Kind:      reflect.Pointer,
 				Children: []*Node{
 					{
 						Name:        "Field",
@@ -378,13 +378,13 @@ func TestEncodeToFlat(t *testing.T) {
 			node: &Node{
 				Name:      "traefik",
 				FieldName: "",
-				Kind:      reflect.Ptr,
+				Kind:      reflect.Pointer,
 				Children: []*Node{
 					{
 						Name:        "Foo",
 						Description: "foo description",
 						FieldName:   "Foo",
-						Kind:        reflect.Ptr,
+						Kind:        reflect.Pointer,
 						Tag:         `description:"foo description"`,
 						Children: []*Node{
 							{
@@ -423,13 +423,13 @@ func TestEncodeToFlat(t *testing.T) {
 			node: &Node{
 				Name:      "traefik",
 				FieldName: "",
-				Kind:      reflect.Ptr,
+				Kind:      reflect.Pointer,
 				Children: []*Node{
 					{
 						Name:        "Foo",
 						Description: "foo description",
 						FieldName:   "Foo",
-						Kind:        reflect.Ptr,
+						Kind:        reflect.Pointer,
 						Tag:         `description:"foo description"`,
 						Children: []*Node{
 							{
@@ -462,13 +462,13 @@ func TestEncodeToFlat(t *testing.T) {
 			node: &Node{
 				Name:      "traefik",
 				FieldName: "",
-				Kind:      reflect.Ptr,
+				Kind:      reflect.Pointer,
 				Children: []*Node{
 					{
 						Name:        "Foo",
 						Description: "foo description",
 						FieldName:   "Foo",
-						Kind:        reflect.Ptr,
+						Kind:        reflect.Pointer,
 						Tag:         `description:"foo description" label:"allowEmpty"`,
 						Children: []*Node{
 							{
@@ -520,20 +520,20 @@ func TestEncodeToFlat(t *testing.T) {
 			node: &Node{
 				Name:      "traefik",
 				FieldName: "",
-				Kind:      reflect.Ptr,
+				Kind:      reflect.Pointer,
 				Children: []*Node{
 					{
 						Name:        "Foo",
 						Description: "foo description",
 						FieldName:   "Foo",
-						Kind:        reflect.Ptr,
+						Kind:        reflect.Pointer,
 						Tag:         `description:"foo description"`,
 						Children: []*Node{
 							{
 								Name:        "Fii",
 								Description: "fii description",
 								FieldName:   "Fii",
-								Kind:        reflect.Ptr,
+								Kind:        reflect.Pointer,
 								Tag:         `description:"fii description"`,
 								Children: []*Node{
 									{
@@ -582,20 +582,20 @@ func TestEncodeToFlat(t *testing.T) {
 			node: &Node{
 				Name:      "traefik",
 				FieldName: "",
-				Kind:      reflect.Ptr,
+				Kind:      reflect.Pointer,
 				Children: []*Node{
 					{
 						Name:        "Foo",
 						Description: "foo description",
 						FieldName:   "Foo",
-						Kind:        reflect.Ptr,
+						Kind:        reflect.Pointer,
 						Tag:         `description:"foo description" label:"allowEmpty"`,
 						Children: []*Node{
 							{
 								Name:        "Fii",
 								Description: "fii description",
 								FieldName:   "Fii",
-								Kind:        reflect.Ptr,
+								Kind:        reflect.Pointer,
 								Tag:         `description:"fii description" label:"allowEmpty"`,
 								Children: []*Node{
 									{
@@ -648,13 +648,13 @@ func TestEncodeToFlat(t *testing.T) {
 			node: &Node{
 				Name:      "traefik",
 				FieldName: "",
-				Kind:      reflect.Ptr,
+				Kind:      reflect.Pointer,
 				Children: []*Node{
 					{
 						Name:        "Foo",
 						Description: "foo description",
 						FieldName:   "Foo",
-						Kind:        reflect.Ptr,
+						Kind:        reflect.Pointer,
 						Tag:         `description:"foo description"`,
 						Children: []*Node{
 							{
@@ -701,13 +701,13 @@ func TestEncodeToFlat(t *testing.T) {
 			node: &Node{
 				Name:      "traefik",
 				FieldName: "",
-				Kind:      reflect.Ptr,
+				Kind:      reflect.Pointer,
 				Children: []*Node{
 					{
 						Name:        "Foo",
 						Description: "foo description",
 						FieldName:   "Foo",
-						Kind:        reflect.Ptr,
+						Kind:        reflect.Pointer,
 						Tag:         `description:"foo description"`,
 						Children: []*Node{
 							{
@@ -720,7 +720,7 @@ func TestEncodeToFlat(t *testing.T) {
 									{
 										Name:      "\u003cname\u003e",
 										FieldName: "\u003cname\u003e",
-										Kind:      reflect.Ptr,
+										Kind:      reflect.Pointer,
 									},
 								},
 							},
@@ -747,7 +747,7 @@ func TestEncodeToFlat(t *testing.T) {
 			node: &Node{
 				Name:      "traefik",
 				FieldName: "",
-				Kind:      reflect.Ptr,
+				Kind:      reflect.Pointer,
 				Children: []*Node{
 					{
 						Name:        "Foo",
@@ -811,7 +811,7 @@ func TestEncodeToFlat(t *testing.T) {
 			node: &Node{
 				Name:      "traefik",
 				FieldName: "",
-				Kind:      reflect.Ptr,
+				Kind:      reflect.Pointer,
 				Children: []*Node{
 					{
 						Name:        "Foo",
@@ -823,7 +823,7 @@ func TestEncodeToFlat(t *testing.T) {
 							{
 								Name:      "\u003cname\u003e",
 								FieldName: "\u003cname\u003e",
-								Kind:      reflect.Ptr,
+								Kind:      reflect.Pointer,
 								Children: []*Node{
 									{
 										Name:        "Field",
@@ -873,7 +873,7 @@ func TestEncodeToFlat(t *testing.T) {
 			node: &Node{
 				Name:      "traefik",
 				FieldName: "",
-				Kind:      reflect.Ptr,
+				Kind:      reflect.Pointer,
 				Children: []*Node{
 					{
 						Name:        "Field",
@@ -909,7 +909,7 @@ func TestEncodeToFlat(t *testing.T) {
 			node: &Node{
 				Name:      "traefik",
 				FieldName: "",
-				Kind:      reflect.Ptr,
+				Kind:      reflect.Pointer,
 				Children: []*Node{
 					{
 						Name:        "Foo",
@@ -921,7 +921,7 @@ func TestEncodeToFlat(t *testing.T) {
 							{
 								Name:      "\u003cname\u003e",
 								FieldName: "\u003cname\u003e",
-								Kind:      reflect.Ptr,
+								Kind:      reflect.Pointer,
 								Children: []*Node{
 									{
 										Name:        "Field",
@@ -976,7 +976,7 @@ func TestEncodeToFlat(t *testing.T) {
 			node: &Node{
 				Name:      "traefik",
 				FieldName: "",
-				Kind:      reflect.Ptr,
+				Kind:      reflect.Pointer,
 				Children: []*Node{
 					{
 						Name:        "Foo",
@@ -988,12 +988,12 @@ func TestEncodeToFlat(t *testing.T) {
 							{
 								Name:      "\u003cname\u003e",
 								FieldName: "\u003cname\u003e",
-								Kind:      reflect.Ptr,
+								Kind:      reflect.Pointer,
 								Children: []*Node{
 									{
 										Name:      "Fii",
 										FieldName: "Fii",
-										Kind:      reflect.Ptr,
+										Kind:      reflect.Pointer,
 										Children: []*Node{
 											{
 												Name:        "Field",
@@ -1040,12 +1040,12 @@ func TestEncodeToFlat(t *testing.T) {
 			node: &Node{
 				Name:      "traefik",
 				FieldName: "",
-				Kind:      reflect.Ptr,
+				Kind:      reflect.Pointer,
 				Children: []*Node{
 					{
 						Name:      "Foo",
 						FieldName: "Foo",
-						Kind:      reflect.Ptr,
+						Kind:      reflect.Pointer,
 						Children: []*Node{
 							{
 								Name:        "Field",
@@ -1089,17 +1089,17 @@ func TestEncodeToFlat(t *testing.T) {
 			node: &Node{
 				Name:      "traefik",
 				FieldName: "",
-				Kind:      reflect.Ptr,
+				Kind:      reflect.Pointer,
 				Children: []*Node{
 					{
 						Name:      "Foo",
 						FieldName: "Foo",
-						Kind:      reflect.Ptr,
+						Kind:      reflect.Pointer,
 						Children: []*Node{
 							{
 								Name:      "Fii",
 								FieldName: "Fii",
-								Kind:      reflect.Ptr,
+								Kind:      reflect.Pointer,
 								Children: []*Node{
 									{
 										Name:        "Field",
@@ -1180,7 +1180,7 @@ func TestEncodeToFlat(t *testing.T) {
 				Name: "traefik",
 				Kind: reflect.Struct,
 				Children: []*Node{
-					{Name: "Foo", Kind: reflect.Ptr, Description: "foo description", Children: []*Node{
+					{Name: "Foo", Kind: reflect.Pointer, Description: "foo description", Children: []*Node{
 						{Name: "Fii", Kind: reflect.Slice, Description: "fii description", Children: []*Node{
 							{Name: "[0]", Kind: reflect.Struct, Children: []*Node{
 								{Name: "Field1", Value: "", Kind: reflect.String, Description: "field1 description"},

@@ -69,8 +69,8 @@ type encoderToFlat struct {
 func (e encoderToFlat) createFlat(field reflect.Value, name string, node *Node) []Flat {
 	var entries []Flat
 	if node.Kind != reflect.Map && node.Description != "-" {
-		if !(node.Kind == reflect.Ptr && len(node.Children) > 0) ||
-			(node.Kind == reflect.Ptr && node.Tag.Get(e.TagName) == TagLabelAllowEmpty) {
+		if !(node.Kind == reflect.Pointer && len(node.Children) > 0) ||
+			(node.Kind == reflect.Pointer && node.Tag.Get(e.TagName) == TagLabelAllowEmpty) {
 			if node.Name[0] != '[' {
 				entries = append(entries, Flat{
 					Name:        e.getName(name),
@@ -100,7 +100,7 @@ func (e encoderToFlat) createFlat(field reflect.Value, name string, node *Node) 
 				})
 			}
 
-			if child.Kind == reflect.Struct || child.Kind == reflect.Ptr {
+			if child.Kind == reflect.Struct || child.Kind == reflect.Pointer {
 				for _, ch := range child.Children {
 					f := e.getField(fChild, ch)
 					n := e.getName(name, child.Name, ch.Name)
@@ -121,7 +121,7 @@ func (e encoderToFlat) getField(field reflect.Value, node *Node) reflect.Value {
 	switch field.Kind() {
 	case reflect.Struct:
 		return field.FieldByName(node.FieldName)
-	case reflect.Ptr:
+	case reflect.Pointer:
 		if field.Elem().Kind() == reflect.Struct {
 			return field.Elem().FieldByName(node.FieldName)
 		}
@@ -134,7 +134,7 @@ func (e encoderToFlat) getField(field reflect.Value, node *Node) reflect.Value {
 }
 
 func (e encoderToFlat) getNodeValue(field reflect.Value, node *Node) string {
-	if node.Kind == reflect.Ptr && len(node.Children) > 0 {
+	if node.Kind == reflect.Pointer && len(node.Children) > 0 {
 		return defaultPtrValue
 	}
 

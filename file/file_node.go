@@ -68,7 +68,7 @@ func getRootFieldNames(element interface{}) []string {
 func getFieldNames(rootType reflect.Type) []string {
 	var names []string
 
-	if rootType.Kind() == reflect.Ptr {
+	if rootType.Kind() == reflect.Pointer {
 		rootType = rootType.Elem()
 	}
 
@@ -84,7 +84,7 @@ func getFieldNames(rootType reflect.Type) []string {
 		}
 
 		if field.Anonymous &&
-			(field.Type.Kind() == reflect.Ptr && field.Type.Elem().Kind() == reflect.Struct || field.Type.Kind() == reflect.Struct) {
+			(field.Type.Kind() == reflect.Pointer && field.Type.Elem().Kind() == reflect.Struct || field.Type.Kind() == reflect.Struct) {
 			names = append(names, getFieldNames(field.Type)...)
 			continue
 		}

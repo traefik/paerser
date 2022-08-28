@@ -36,7 +36,14 @@ linters:
     - golint # Deprecated
     - interfacer # Deprecated
     - exhaustivestruct # Deprecated
+    - ifshort # Deprecated
+    - varcheck # Deprecated
+    - deadcode # Deprecated
+    - structcheck # Deprecated
+    - nosnakecase # Deprecated
     - cyclop # duplicate of gocyclo
+    - rowserrcheck # SQL
+    - sqlclosecheck # SQL
     - dupl
     - lll
     - nestif
@@ -50,10 +57,8 @@ linters:
     - tparallel
     - testpackage
     - paralleltest
-    - ifshort
     - forcetypeassert
     - varnamelen
-    - nosnakecase
 
 issues:
   exclude-use-default: false
@@ -61,6 +66,7 @@ issues:
   max-same-issues: 0
   exclude:
     - 'ST1000: at least one file in a package should have a package comment'
+    - 'package-comments: should have a package comment'
   exclude-rules:
     - path: (.+)_test.go
       linters:

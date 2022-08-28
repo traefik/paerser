@@ -82,7 +82,7 @@ func (f *flagSet) parseOne() (bool, error) {
 	}
 
 	flagType := f.getFlagType(name)
-	if flagType == reflect.Bool || flagType == reflect.Ptr {
+	if flagType == reflect.Bool || flagType == reflect.Pointer {
 		f.setValue(name, "true")
 		return true, nil
 	}

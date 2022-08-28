@@ -28,7 +28,7 @@ func generate(element interface{}) {
 
 func fill(field reflect.Value) {
 	switch field.Kind() {
-	case reflect.Ptr:
+	case reflect.Pointer:
 		setPtr(field)
 	case reflect.Struct:
 		setStruct(field)
@@ -36,12 +36,12 @@ func fill(field reflect.Value) {
 		setMap(field)
 	case reflect.Slice:
 		if field.Type().Elem().Kind() == reflect.Struct ||
-			field.Type().Elem().Kind() == reflect.Ptr && field.Type().Elem().Elem().Kind() == reflect.Struct {
+			field.Type().Elem().Kind() == reflect.Pointer && field.Type().Elem().Elem().Kind() == reflect.Struct {
 			slice := reflect.MakeSlice(field.Type(), 1, 1)
 			field.Set(slice)
 
 			// use Ptr to allow "SetDefaults"
-			value := reflect.New(reflect.PtrTo(field.Type().Elem()))
+			value := reflect.New(reflect.PointerTo(field.Type().Elem()))
 			setPtr(value)
 
 			elem := value.Elem().Elem()
@@ -88,7 +88,7 @@ func setMap(field reflect.Value) {
 		field.Set(reflect.MakeMap(field.Type()))
 	}
 
-	ptrValue := reflect.New(reflect.PtrTo(field.Type().Elem()))
+	ptrValue := reflect.New(reflect.PointerTo(field.Type().Elem()))
 	fill(ptrValue)
 
 	value := ptrValue.Elem().Elem()

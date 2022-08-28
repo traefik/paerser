@@ -48,7 +48,7 @@ func (e encoderToNode) setNodeValue(node *Node, rValue reflect.Value) error {
 		node.Value = strconv.FormatBool(rValue.Bool())
 	case reflect.Struct:
 		return e.setStructValue(node, rValue)
-	case reflect.Ptr:
+	case reflect.Pointer:
 		return e.setNodeValue(node, rValue.Elem())
 	case reflect.Map:
 		return e.setMapValue(node, rValue)
@@ -102,7 +102,7 @@ func (e encoderToNode) setStructValue(node *Node, rValue reflect.Value) error {
 			return err
 		}
 
-		if field.Type.Kind() == reflect.Ptr {
+		if field.Type.Kind() == reflect.Pointer {
 			if field.Type.Elem().Kind() != reflect.Struct && fieldValue.IsNil() {
 				continue
 			}
@@ -150,7 +150,7 @@ func (e encoderToNode) setSliceValue(node *Node, rValue reflect.Value) error {
 	}
 
 	if rValue.Type().Elem().Kind() == reflect.Struct ||
-		rValue.Type().Elem().Kind() == reflect.Ptr && rValue.Type().Elem().Elem().Kind() == reflect.Struct {
+		rValue.Type().Elem().Kind() == reflect.Pointer && rValue.Type().Elem().Elem().Kind() == reflect.Struct {
 		for i := 0; i < rValue.Len(); i++ {
 			child := &Node{Name: "[" + strconv.Itoa(i) + "]"}
 
@@ -197,7 +197,7 @@ func (e encoderToNode) isSkippedField(field reflect.StructField, fieldValue refl
 		return true
 	}
 
-	if field.Type.Kind() == reflect.Ptr && field.Type.Elem().Kind() == reflect.Struct && fieldValue.IsNil() {
+	if field.Type.Kind() == reflect.Pointer && field.Type.Elem().Kind() == reflect.Struct && fieldValue.IsNil() {
 		return true
 	}
 

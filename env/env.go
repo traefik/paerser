@@ -25,10 +25,10 @@ func Decode(environ []string, prefix string, element interface{}) error {
 
 	vars := make(map[string]string)
 	for _, evr := range environ {
-		n := strings.SplitN(evr, "=", 2)
-		if strings.HasPrefix(strings.ToUpper(n[0]), prefix) {
-			key := strings.ReplaceAll(strings.ToLower(n[0]), "_", ".")
-			vars[key] = n[1]
+		k, v, _ := strings.Cut(evr, "=")
+		if strings.HasPrefix(strings.ToUpper(k), prefix) {
+			key := strings.ReplaceAll(strings.ToLower(k), "_", ".")
+			vars[key] = v
 		}
 	}
 

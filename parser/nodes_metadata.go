@@ -53,7 +53,7 @@ func (m metadata) browseChildren(fType reflect.Type, node *Node) error {
 
 func (m metadata) add(rootType reflect.Type, node *Node) error {
 	rType := rootType
-	if rootType.Kind() == reflect.Ptr {
+	if rootType.Kind() == reflect.Pointer {
 		rType = rootType.Elem()
 	}
 
@@ -75,7 +75,7 @@ func (m metadata) add(rootType reflect.Type, node *Node) error {
 	node.Kind = fType.Kind()
 	node.Tag = field.Tag
 
-	if fType.Kind() == reflect.Struct || fType.Kind() == reflect.Ptr && fType.Elem().Kind() == reflect.Struct ||
+	if fType.Kind() == reflect.Struct || fType.Kind() == reflect.Pointer && fType.Elem().Kind() == reflect.Struct ||
 		fType.Kind() == reflect.Map {
 		if len(node.Children) == 0 && !(field.Tag.Get(m.TagName) == TagLabelAllowEmpty || field.Tag.Get(m.TagName) == "-") {
 			return fmt.Errorf("%s cannot be a standalone element (type %s)", node.Name, fType)
@@ -90,7 +90,7 @@ func (m metadata) add(rootType reflect.Type, node *Node) error {
 		return nil
 	}
 
-	if fType.Kind() == reflect.Struct || fType.Kind() == reflect.Ptr && fType.Elem().Kind() == reflect.Struct {
+	if fType.Kind() == reflect.Struct || fType.Kind() == reflect.Pointer && fType.Elem().Kind() == reflect.Struct {
 		return m.browseChildren(fType, node)
 	}
 
@@ -106,7 +106,7 @@ func (m metadata) add(rootType reflect.Type, node *Node) error {
 			child.Kind = elem.Kind()
 
 			if elem.Kind() == reflect.Map || elem.Kind() == reflect.Struct ||
-				(elem.Kind() == reflect.Ptr && elem.Elem().Kind() == reflect.Struct) {
+				(elem.Kind() == reflect.Pointer && elem.Elem().Kind() == reflect.Struct) {
 				if err = m.browseChildren(elem, child); err != nil {
 					return err
 				}
@@ -193,7 +193,7 @@ func isSupportedType(field reflect.StructField) error {
 			reflect.Float32,
 			reflect.Float64,
 			reflect.Struct,
-			reflect.Ptr:
+			reflect.Pointer:
 			return nil
 		default:
 			return fmt.Errorf("unsupported slice type: %v", fType)

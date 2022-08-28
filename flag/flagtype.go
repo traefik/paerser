@@ -29,7 +29,7 @@ func addFlagType(ref map[string]reflect.Kind, name string, typ reflect.Type) {
 	case reflect.Map:
 		addFlagType(ref, getName(name, parser.MapNamePlaceholder), typ.Elem())
 
-	case reflect.Ptr:
+	case reflect.Pointer:
 		if typ.Elem().Kind() == reflect.Struct {
 			ref[name] = typ.Kind()
 		}

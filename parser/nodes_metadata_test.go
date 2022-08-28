@@ -9,6 +9,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+type MySliceType []string
+
 func TestAddMetadata(t *testing.T) {
 	type expected struct {
 		node  *Node
@@ -82,7 +84,7 @@ func TestAddMetadata(t *testing.T) {
 			expected: expected{
 				node: &Node{
 					Name: "traefik",
-					Kind: reflect.Ptr,
+					Kind: reflect.Pointer,
 					Children: []*Node{
 						{Name: "Foo", FieldName: "Foo", Value: "bar", Kind: reflect.String},
 					},
@@ -208,7 +210,7 @@ func TestAddMetadata(t *testing.T) {
 					Name: "traefik",
 					Kind: reflect.Struct,
 					Children: []*Node{
-						{Name: "Foo", FieldName: "Foo", Value: "0", Kind: reflect.Ptr},
+						{Name: "Foo", FieldName: "Foo", Value: "0", Kind: reflect.Pointer},
 					},
 				},
 			},
@@ -229,7 +231,7 @@ func TestAddMetadata(t *testing.T) {
 					Name: "traefik",
 					Kind: reflect.Struct,
 					Children: []*Node{
-						{Name: "Foo", FieldName: "Foo", Value: "0", Kind: reflect.Ptr},
+						{Name: "Foo", FieldName: "Foo", Value: "0", Kind: reflect.Pointer},
 					},
 				},
 			},
@@ -250,7 +252,7 @@ func TestAddMetadata(t *testing.T) {
 					Name: "traefik",
 					Kind: reflect.Struct,
 					Children: []*Node{
-						{Name: "Foo", FieldName: "Foo", Value: "0", Kind: reflect.Ptr},
+						{Name: "Foo", FieldName: "Foo", Value: "0", Kind: reflect.Pointer},
 					},
 				},
 			},
@@ -640,7 +642,7 @@ func TestAddMetadata(t *testing.T) {
 					Name: "traefik",
 					Kind: reflect.Struct,
 					Children: []*Node{
-						{Name: "Foo", FieldName: "Foo", Kind: reflect.Ptr, Children: []*Node{
+						{Name: "Foo", FieldName: "Foo", Kind: reflect.Pointer, Children: []*Node{
 							{Name: "Bar", FieldName: "Bar", Value: "bir", Kind: reflect.String},
 						}},
 					},
@@ -903,15 +905,15 @@ func TestAddMetadata(t *testing.T) {
 				Kind: reflect.Struct,
 				Children: []*Node{
 					{Name: "Foo", FieldName: "Foo", Kind: reflect.Slice, Children: []*Node{
-						{Name: "[0]", Kind: reflect.Ptr, Children: []*Node{
+						{Name: "[0]", Kind: reflect.Pointer, Children: []*Node{
 							{Name: "Field1", FieldName: "Field1", Value: "A", Kind: reflect.String},
 							{Name: "Field2", FieldName: "Field2", Value: "A", Kind: reflect.String},
 						}},
-						{Name: "[1]", Kind: reflect.Ptr, Children: []*Node{
+						{Name: "[1]", Kind: reflect.Pointer, Children: []*Node{
 							{Name: "Field1", FieldName: "Field1", Value: "B", Kind: reflect.String},
 							{Name: "Field2", FieldName: "Field2", Value: "B", Kind: reflect.String},
 						}},
-						{Name: "[2]", Kind: reflect.Ptr, Children: []*Node{
+						{Name: "[2]", Kind: reflect.Pointer, Children: []*Node{
 							{Name: "Field1", FieldName: "Field1", Value: "C", Kind: reflect.String},
 							{Name: "Field2", FieldName: "Field2", Value: "C", Kind: reflect.String},
 						}},
@@ -1038,7 +1040,7 @@ func TestAddMetadata(t *testing.T) {
 					Name: "traefik",
 					Kind: reflect.Struct,
 					Children: []*Node{
-						{Name: "Foo", FieldName: "Foo", Kind: reflect.Ptr, Children: []*Node{
+						{Name: "Foo", FieldName: "Foo", Kind: reflect.Pointer, Children: []*Node{
 							{Name: "Bar", FieldName: "Bar", Kind: reflect.Map, RawValue: map[string]interface{}{
 								"AAA": "valueA",
 								"BBB": map[string]interface{}{
@@ -1180,5 +1182,3 @@ func Test_nodeToRawMap(t *testing.T) {
 		})
 	}
 }
-
-type MySliceType []string
