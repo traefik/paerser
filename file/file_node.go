@@ -29,7 +29,7 @@ func decodeFileToNode(filePath string, filters ...string) (*parser.Node, error) 
 			return nil, err
 		}
 
-	case ".yml", ".yaml":
+	case ".yml", ".yaml", ".json":
 		err = yaml.Unmarshal(content, data)
 		if err != nil {
 			return nil, err
