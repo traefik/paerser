@@ -125,7 +125,7 @@ func Test_getFlagTypes(t *testing.T) {
 			},
 		},
 		{
-			desc: "map map bool",
+			desc: "map of map bool",
 			element: &struct {
 				Foo map[string]map[string]bool
 			}{},

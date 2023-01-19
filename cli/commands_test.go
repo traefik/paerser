@@ -272,7 +272,7 @@ func Test_execute(t *testing.T) {
 			expected: expected{result: "sub2"},
 		},
 		{
-			desc: "command with sub sub command, call sub command",
+			desc: "command with sub sub-command, call sub command",
 			args: []string{"", "sub1"},
 			command: func() *Command {
 				rootCmd := &Command{
@@ -311,7 +311,7 @@ func Test_execute(t *testing.T) {
 			expected: expected{result: "sub1"},
 		},
 		{
-			desc: "command with sub sub command, call sub sub command",
+			desc: "command with sub sub-command, call sub sub-command",
 			args: []string{"", "sub1", "sub2"},
 			command: func() *Command {
 				rootCmd := &Command{
@@ -661,7 +661,7 @@ func Test_execute(t *testing.T) {
 			expected: expected{},
 		},
 		{
-			desc: "sub sub command help",
+			desc: "sub sub-command help",
 			args: []string{"", "test", "subtest", "subsubtest", "--help"},
 			command: func() *Command {
 				rootCmd := &Command{
