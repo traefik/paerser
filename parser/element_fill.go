@@ -420,15 +420,10 @@ func (f filler) fillRawValue(field reflect.Value, node *Node, subMap bool) error
 		return nil
 	}
 
-	// In the case of submap, fill raw typed slices recursively.
-	mapRawValue := reflect.ValueOf(node.RawValue)
-	for k, v := range m {
-		value, err := f.fillRawTypedSliceRecursive(v)
-		if err != nil {
-			return err
-		}
-
-		mapRawValue.SetMapIndex(reflect.ValueOf(k), value)
+	// In the case of sub-map, fill raw typed slices recursively.
+	_, err := f.fillRawMapWithTypedSlice(m)
+	if err != nil {
+		return err
 	}
 
 	p := map[string]interface{}{node.Name: m}
@@ -439,8 +434,7 @@ func (f filler) fillRawValue(field reflect.Value, node *Node, subMap bool) error
 	return nil
 }
 
-// fillRawTypedSliceRecursive is used to fill raw typed slices recursively.
-func (f filler) fillRawTypedSliceRecursive(elt interface{}) (reflect.Value, error) {
+func (f filler) fillRawMapWithTypedSlice(elt interface{}) (reflect.Value, error) {
 	eltValue := reflect.ValueOf(elt)
 
 	switch eltValue.Kind() {
@@ -456,7 +450,7 @@ func (f filler) fillRawTypedSliceRecursive(elt interface{}) (reflect.Value, erro
 
 	case reflect.Map:
 		for k, v := range elt.(map[string]interface{}) {
-			value, err := f.fillRawTypedSliceRecursive(v)
+			value, err := f.fillRawMapWithTypedSlice(v)
 			if err != nil {
 				return eltValue, err
 			}
