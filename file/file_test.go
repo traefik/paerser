@@ -190,45 +190,6 @@ yi: {}
 	assert.Equal(t, expected, element)
 }
 
-func TestDecodeTypedSliceRecursive_YAML(t *testing.T) {
-	content := `
-foo:
-  - foo
-  - bar
-bar:
-  foo:
-  - foo
-  - bar
-  baz:
-    foo:
-    - foo
-    - bar
-    boz:
-      foo:
-      - 42
-      - 42
-`
-
-	element := &map[string]interface{}{}
-
-	err := DecodeContent(content, ".yaml", element)
-	require.NoError(t, err)
-
-	expected := &map[string]interface{}{
-		"foo": []interface{}{"foo", "bar"},
-		"bar": map[string]interface{}{
-			"foo": []interface{}{"foo", "bar"},
-			"baz": map[string]interface{}{
-				"foo": []interface{}{"foo", "bar"},
-				"boz": map[string]interface{}{
-					"foo": []interface{}{int64(42), int64(42)},
-				},
-			},
-		},
-	}
-	assert.Equal(t, expected, element)
-}
-
 func TestDecodeContent_YAML_rawSlice(t *testing.T) {
 	content := `
 testData:
@@ -344,6 +305,45 @@ meta:
 			assert.Equal(t, test.expected, element)
 		})
 	}
+}
+
+func TestDecodeContent_YAML_typedSliceRecursive(t *testing.T) {
+	content := `
+foo:
+  - foo
+  - bar
+bar:
+  foo:
+  - foo
+  - bar
+  baz:
+    foo:
+    - foo
+    - bar
+    boz:
+      foo:
+      - 42
+      - 42
+`
+
+	element := &map[string]interface{}{}
+
+	err := DecodeContent(content, ".yaml", element)
+	require.NoError(t, err)
+
+	expected := &map[string]interface{}{
+		"foo": []interface{}{"foo", "bar"},
+		"bar": map[string]interface{}{
+			"foo": []interface{}{"foo", "bar"},
+			"baz": map[string]interface{}{
+				"foo": []interface{}{"foo", "bar"},
+				"boz": map[string]interface{}{
+					"foo": []interface{}{int64(42), int64(42)},
+				},
+			},
+		},
+	}
+	assert.Equal(t, expected, element)
 }
 
 func TestDecodeContent_JSON(t *testing.T) {
