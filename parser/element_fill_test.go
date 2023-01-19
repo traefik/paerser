@@ -1556,6 +1556,48 @@ func TestFill(t *testing.T) {
 				},
 			}},
 		},
+		{
+			desc:              "recursive slices",
+			rawSliceSeparator: "║",
+			node: &Node{
+				Name: "traefik",
+				Kind: reflect.Pointer,
+				Children: []*Node{
+					{
+						Name: "bar",
+						RawValue: map[string]interface{}{
+							"baz": map[string]interface{}{
+								"boz": map[string]interface{}{
+									"foo": "║2║42║42",
+								},
+								"foo": "║24║foo║bar",
+							},
+							"foo": "║24║foo║bar",
+						},
+					},
+					{
+						Name:  "foo",
+						Value: "║24║foo║bar",
+						RawValue: map[string]interface{}{
+							"foo": "║24║foo║bar",
+						},
+					},
+				},
+			},
+			element: &map[string]interface{}{},
+			expected: expected{element: &map[string]interface{}{
+				"foo": []interface{}{"foo", "bar"},
+				"bar": map[string]interface{}{
+					"foo": []interface{}{"foo", "bar"},
+					"baz": map[string]interface{}{
+						"foo": []interface{}{"foo", "bar"},
+						"boz": map[string]interface{}{
+							"foo": []interface{}{int64(42), int64(42)},
+						},
+					},
+				},
+			}},
+		},
 	}
 
 	for _, test := range testCases {

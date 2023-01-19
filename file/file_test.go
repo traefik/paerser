@@ -326,12 +326,12 @@ bar:
       - 42
 `
 
-	element := &map[string]interface{}{}
+	element := map[string]interface{}{}
 
-	err := DecodeContent(content, ".yaml", element)
+	err := DecodeContent(content, ".yaml", &element)
 	require.NoError(t, err)
 
-	expected := &map[string]interface{}{
+	expected := map[string]interface{}{
 		"foo": []interface{}{"foo", "bar"},
 		"bar": map[string]interface{}{
 			"foo": []interface{}{"foo", "bar"},
