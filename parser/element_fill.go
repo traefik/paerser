@@ -420,12 +420,46 @@ func (f filler) fillRawValue(field reflect.Value, node *Node, subMap bool) error
 		return nil
 	}
 
+	// In the case of sub-map, fill raw typed slices recursively.
+	_, err := f.fillRawMapWithTypedSlice(m)
+	if err != nil {
+		return err
+	}
+
 	p := map[string]interface{}{node.Name: m}
 	node.RawValue = p
 
 	field.SetMapIndex(reflect.ValueOf(node.Name), reflect.ValueOf(p[node.Name]))
 
 	return nil
+}
+
+func (f filler) fillRawMapWithTypedSlice(elt interface{}) (reflect.Value, error) {
+	eltValue := reflect.ValueOf(elt)
+
+	switch eltValue.Kind() {
+	case reflect.String:
+		if strings.HasPrefix(elt.(string), f.RawSliceSeparator) {
+			sliceValue, err := f.fillRawTypedSlice(elt.(string))
+			if err != nil {
+				return eltValue, err
+			}
+
+			return sliceValue, nil
+		}
+
+	case reflect.Map:
+		for k, v := range elt.(map[string]interface{}) {
+			value, err := f.fillRawMapWithTypedSlice(v)
+			if err != nil {
+				return eltValue, err
+			}
+
+			eltValue.SetMapIndex(reflect.ValueOf(k), value)
+		}
+	}
+
+	return eltValue, nil
 }
 
 func (f filler) fillRawTypedSlice(s string) (reflect.Value, error) {
