@@ -1598,6 +1598,56 @@ func TestFill(t *testing.T) {
 				},
 			}},
 		},
+		{
+			desc: "any",
+			node: &Node{
+				Name: "traefik",
+				Kind: reflect.Struct,
+				Children: []*Node{
+					{
+						Name:      "bar",
+						FieldName: "Bar",
+						RawValue: map[string]interface{}{
+							"baz": map[string]interface{}{
+								"boz": map[string]interface{}{
+									"foo": "42",
+								},
+								"foo": "bar",
+							},
+							"foo": "bar",
+						},
+					},
+					{
+						Name:      "foo",
+						FieldName: "Foo",
+						Value:     "bar",
+						RawValue: map[string]interface{}{
+							"foo": "bar",
+						},
+					},
+
+					{
+						Name:      "fii",
+						FieldName: "Fii",
+						Value:     "bar",
+					},
+				},
+			},
+			element: &struct {
+				Bar any
+				Foo any
+				Fii any
+			}{},
+			expected: expected{element: &struct {
+				Bar any
+				Foo any
+				Fii any
+			}{
+				Bar: map[string]any{"foo": "bar", "baz": map[string]any{"foo": "bar", "boz": map[string]any{"foo": "42"}}},
+				Foo: map[string]any{"foo": "bar"},
+				Fii: "bar",
+			}},
+		},
 	}
 
 	for _, test := range testCases {
