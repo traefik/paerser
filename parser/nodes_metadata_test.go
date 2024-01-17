@@ -121,7 +121,42 @@ func TestAddMetadata(t *testing.T) {
 				},
 			},
 			structure: struct{ Foo interf }{},
-			expected:  expected{error: true},
+			expected: expected{
+				node: &Node{
+					Name: "traefik",
+					Kind: reflect.Struct,
+					Children: []*Node{
+						{Name: "Foo", FieldName: "Foo", RawValue: map[string]any{
+							"Fii": "hii",
+						}, Kind: reflect.Interface},
+					},
+				},
+			},
+		},
+		{
+			desc: "level 1, interface multiple level",
+			tree: &Node{
+				Name: "traefik",
+				Children: []*Node{
+					{Name: "Foo", Value: "", Children: []*Node{
+						{Name: "Fii", Children: []*Node{
+							{Name: "Fuu", Value: "huu"},
+						}},
+					}},
+				},
+			},
+			structure: struct{ Foo interf }{},
+			expected: expected{
+				node: &Node{
+					Name: "traefik",
+					Kind: reflect.Struct,
+					Children: []*Node{
+						{Name: "Foo", FieldName: "Foo", RawValue: map[string]any{
+							"Fii": map[string]any{"Fuu": "huu"},
+						}, Kind: reflect.Interface},
+					},
+				},
+			},
 		},
 		{
 			desc: "level 1, map string",
