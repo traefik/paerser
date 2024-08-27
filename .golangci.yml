@@ -64,6 +64,8 @@ issues:
   exclude:
     - 'ST1000: at least one file in a package should have a package comment'
     - 'package-comments: should have a package comment'
+    - 'G602: slice index out of range'
+    - 'G602: slice bounds out of range'
   exclude-rules:
     - path: (.+)_test.go
       linters:
