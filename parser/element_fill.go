@@ -458,6 +458,16 @@ func (f filler) fillRawMapWithTypedSlice(elt interface{}) (reflect.Value, error)
 
 			eltValue.SetMapIndex(reflect.ValueOf(k), value)
 		}
+
+	case reflect.Slice:
+		for i, v := range elt.([]interface{}) {
+			value, err := f.fillRawMapWithTypedSlice(v)
+			if err != nil {
+				return eltValue, err
+			}
+
+			eltValue.Index(i).Set(value)
+		}
 	}
 
 	return eltValue, nil

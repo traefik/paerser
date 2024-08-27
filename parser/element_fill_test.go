@@ -1396,6 +1396,37 @@ func TestFill(t *testing.T) {
 			}},
 		},
 		{
+			desc:              "slice struct with slice",
+			rawSliceSeparator: "║",
+			node: &Node{
+				Name: "traefik",
+				Kind: reflect.Pointer,
+				Children: []*Node{
+					{Name: "Foo", FieldName: "Foo", Kind: reflect.Map, Children: []*Node{
+						{Name: "Field1", FieldName: "Field1", RawValue: map[string]interface{}{
+							"Field2": []interface{}{map[string]interface{}{"Values": "║24║foo║bar"}},
+						}},
+						{Name: "Field3", RawValue: map[string]interface{}{
+							"Values": "║24║foo║bar",
+						}},
+					}},
+				},
+			},
+			element: &struct {
+				Foo map[string]interface{}
+			}{},
+			expected: expected{element: &struct {
+				Foo map[string]interface{}
+			}{
+				Foo: map[string]interface{}{
+					"Field1": map[string]interface{}{"Field2": []interface{}{map[string]interface{}{"Values": []interface{}{"foo", "bar"}}}},
+					"Field3": map[string]interface{}{
+						"Values": []interface{}{"foo", "bar"},
+					},
+				},
+			}},
+		},
+		{
 			desc: "slice pointer struct",
 			node: &Node{
 				Name: "traefik",
