@@ -75,8 +75,13 @@ func (m metadata) add(rootType reflect.Type, node *Node) error {
 	node.Kind = fType.Kind()
 	node.Tag = field.Tag
 
-	if fType.Kind() == reflect.Struct || fType.Kind() == reflect.Pointer && fType.Elem().Kind() == reflect.Struct ||
-		fType.Kind() == reflect.Map {
+	if node.Kind == reflect.String && len(node.Children) > 0 {
+		fType = reflect.TypeOf(struct{}{})
+		node.Kind = reflect.Struct
+	}
+
+	if node.Kind == reflect.Struct || node.Kind == reflect.Pointer && fType.Elem().Kind() == reflect.Struct ||
+		node.Kind == reflect.Map {
 		if len(node.Children) == 0 && !(field.Tag.Get(m.TagName) == TagLabelAllowEmpty || field.Tag.Get(m.TagName) == "-") {
 			return fmt.Errorf("%s cannot be a standalone element (type %s)", node.Name, fType)
 		}
@@ -90,11 +95,11 @@ func (m metadata) add(rootType reflect.Type, node *Node) error {
 		return nil
 	}
 
-	if fType.Kind() == reflect.Struct || fType.Kind() == reflect.Pointer && fType.Elem().Kind() == reflect.Struct {
+	if node.Kind == reflect.Struct || node.Kind == reflect.Pointer && fType.Elem().Kind() == reflect.Struct {
 		return m.browseChildren(fType, node)
 	}
 
-	if fType.Kind() == reflect.Map {
+	if node.Kind == reflect.Map {
 		if fType.Elem().Kind() == reflect.Interface {
 			addRawValue(node)
 			return nil
@@ -115,7 +120,7 @@ func (m metadata) add(rootType reflect.Type, node *Node) error {
 		return nil
 	}
 
-	if fType.Kind() == reflect.Slice {
+	if node.Kind == reflect.Slice {
 		if m.AllowSliceAsStruct && field.Tag.Get(TagLabelSliceAsStruct) != "" {
 			return m.browseChildren(fType.Elem(), node)
 		}
@@ -129,7 +134,7 @@ func (m metadata) add(rootType reflect.Type, node *Node) error {
 		return nil
 	}
 
-	return fmt.Errorf("invalid node %s: %v", node.Name, fType.Kind())
+	return fmt.Errorf("invalid node %s: %v", node.Name, node.Kind)
 }
 
 func (m metadata) findTypedField(rType reflect.Type, node *Node) (reflect.StructField, error) {
