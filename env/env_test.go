@@ -166,6 +166,38 @@ func TestDecode(t *testing.T) {
 				Foo: &struct{ Field string }{},
 			},
 		},
+		{
+			desc:    "map under the root key",
+			environ: []string{"TRAEFIK_FOO_BAR_FOOBAR_BARFOO=foo"},
+			element: &struct {
+				Foo map[string]struct {
+					Foobar struct {
+						Barfoo string
+					}
+				}
+			}{},
+			expected: &struct {
+				Foo map[string]struct {
+					Foobar struct {
+						Barfoo string
+					}
+				}
+			}{
+				Foo: map[string]struct {
+					Foobar struct {
+						Barfoo string
+					}
+				}{
+					"bar": {
+						Foobar: struct {
+							Barfoo string
+						}{
+							Barfoo: "foo",
+						},
+					},
+				},
+			},
+		},
 	}
 
 	for _, test := range testCases {
